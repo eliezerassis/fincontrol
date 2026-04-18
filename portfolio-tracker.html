@@ -23,6 +23,11 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
 <!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+if(typeof supabase==='undefined'||!supabase.createClient){
+  document.write('<scr'+'ipt src="https://unpkg.com/@supabase/supabase-js@2"><\/scr'+'ipt>');
+}
+</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0a0a14;color:#e0e0e0;font-family:'Segoe UI','Inter',sans-serif;min-height:100vh}
@@ -2201,14 +2206,20 @@ var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 
 // Inicializar Supabase com proteção
 var sb=null;
-try{
-  if(window.supabase&&window.supabase.createClient){
-    sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-    console.log("[Auth] Supabase SDK loaded OK");
-  }else{
-    console.error("[Auth] Supabase SDK not found on window");
-  }
-}catch(e){console.error("[Auth] Supabase init error:",e)}
+function initSupabase(){
+  try{
+    // O UMD expõe "supabase" como variável global (não em window.supabase necessariamente)
+    var lib=typeof supabase!=='undefined'?supabase:window.supabase;
+    if(lib&&lib.createClient){
+      sb=lib.createClient(SUPABASE_URL,SUPABASE_KEY);
+      console.log("[Auth] Supabase SDK loaded OK");
+      return true;
+    }
+    console.error("[Auth] Supabase SDK not available. typeof supabase=",typeof supabase);
+    return false;
+  }catch(e){console.error("[Auth] Supabase init error:",e);return false}
+}
+initSupabase();
 
 var currentUser=null;
 var _syncTimer=null;
@@ -2378,8 +2389,10 @@ async function initAuth(){
   var appVer=document.getElementById("appVersion");
   if(appVer)appVer.textContent="v"+FC_VERSION;
 
+  if(!sb){initSupabase()}
   if(!sb){
-    authMsg("Erro ao carregar. Verifique sua conexão e recarregue.","error");
+    authMsg("Erro ao carregar. Limpe o cache (Ctrl+Shift+R) e recarregue.","error");
+    console.error("[Auth] sb still null. typeof supabase:",typeof supabase);
     return;
   }
 
