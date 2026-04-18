@@ -2198,47 +2198,63 @@ if(localStorage.getItem('fc_notif')==='1'&&'Notification' in window&&Notificatio
 var FC_VERSION="2.0.0";
 var SUPABASE_URL="https://oavfbsrlweujzhcwkpzy.supabase.co";
 var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hdmZic3Jsd2V1anpoY3drcHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTcxMzIsImV4cCI6MjA5MjA5MzEzMn0.YsCBRPP4BxD0jvCSyd4k3OgIGRczhv3pA5scvWqsQM8";
-var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// Inicializar Supabase com proteção
+var sb=null;
+try{
+  if(window.supabase&&window.supabase.createClient){
+    sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    console.log("[Auth] Supabase SDK loaded OK");
+  }else{
+    console.error("[Auth] Supabase SDK not found on window");
+  }
+}catch(e){console.error("[Auth] Supabase init error:",e)}
+
 var currentUser=null;
 var _syncTimer=null;
 
 // Data keys que sincronizam com Supabase
 var SYNC_KEYS=[
-  {key:"wallets",getLocal:function(){return wallets},setLocal:function(v){wallets=v;saveState()}},
-  {key:"emergenciais",getLocal:function(){return emergBlocos},setLocal:function(v){emergBlocos=v;saveEmerg()}},
-  {key:"aportes",getLocal:function(){return aporteBlocos},setLocal:function(v){aporteBlocos=v;saveAporte()}},
-  {key:"orcamento",getLocal:function(){return orcData},setLocal:function(v){orcData=v;saveOrc()}},
-  {key:"parcelas",getLocal:function(){return parcelas},setLocal:function(v){parcelas=v;saveParc()}},
-  {key:"metas_lp",getLocal:function(){return metasLP},setLocal:function(v){metasLP=v;saveMetaLP()}}
+  {key:"wallets",getLocal:function(){return wallets},setLocal:function(v){wallets=v;try{localStorage.setItem(STORAGE_KEY,JSON.stringify(v))}catch(e){}}},
+  {key:"emergenciais",getLocal:function(){return emergBlocos},setLocal:function(v){emergBlocos=v;try{localStorage.setItem(EMERG_KEY,JSON.stringify(v))}catch(e){}}},
+  {key:"aportes",getLocal:function(){return aporteBlocos},setLocal:function(v){aporteBlocos=v;try{localStorage.setItem(APORTE_KEY,JSON.stringify(v))}catch(e){}}},
+  {key:"orcamento",getLocal:function(){return orcData},setLocal:function(v){orcData=v;try{localStorage.setItem(ORC_KEY,JSON.stringify(v))}catch(e){}}},
+  {key:"parcelas",getLocal:function(){return parcelas},setLocal:function(v){parcelas=v;try{localStorage.setItem(PARC_KEY,JSON.stringify(v))}catch(e){}}},
+  {key:"metas_lp",getLocal:function(){return metasLP},setLocal:function(v){metasLP=v;try{localStorage.setItem(META_LP_KEY,JSON.stringify(v))}catch(e){}}}
 ];
 
 function authMsg(msg,type){
   var el=document.getElementById("authMsg");
-  el.textContent=msg;
-  el.className="auth-msg "+(type||"");
+  if(el){el.textContent=msg;el.className="auth-msg "+(type||"")}
 }
 
 function authSetLoading(loading){
   var btn=document.getElementById("authLoginBtn");
   var btn2=document.getElementById("authSignupBtn");
-  btn.disabled=loading;btn2.disabled=loading;
-  if(loading)btn.innerHTML='<span class="auth-loader"></span> Aguarde...';
-  else btn.textContent="Entrar";
+  if(btn){btn.disabled=loading;btn.innerHTML=loading?'<span class="auth-loader"></span> Aguarde...':"Entrar"}
+  if(btn2)btn2.disabled=loading;
 }
 
 async function authLogin(){
   var email=(document.getElementById("authEmail").value||"").trim();
   var pass=document.getElementById("authPass").value||"";
   if(!email||!pass){authMsg("Preencha email e senha","error");return}
+  if(!sb){authMsg("Erro: SDK não carregou. Recarregue a página.","error");return}
   authSetLoading(true);authMsg("");
-  var res=await sb.auth.signInWithPassword({email:email,password:pass});
-  if(res.error){
+  try{
+    var res=await sb.auth.signInWithPassword({email:email,password:pass});
+    if(res.error){
+      authSetLoading(false);
+      authMsg(res.error.message==="Invalid login credentials"?"Email ou senha incorretos":res.error.message,"error");
+      return;
+    }
+    currentUser=res.data.user;
+    await onAuthSuccess();
+  }catch(e){
     authSetLoading(false);
-    authMsg(res.error.message==="Invalid login credentials"?"Email ou senha incorretos":res.error.message,"error");
-    return;
+    authMsg("Erro de conexão: "+e.message,"error");
+    console.error("[Auth] Login error:",e);
   }
-  currentUser=res.data.user;
-  await onAuthSuccess();
 }
 
 async function authSignup(){
@@ -2246,39 +2262,45 @@ async function authSignup(){
   var pass=document.getElementById("authPass").value||"";
   if(!email){authMsg("Informe seu email","error");return}
   if(!pass||pass.length<6){authMsg("Senha deve ter no mínimo 6 caracteres","error");return}
+  if(!sb){authMsg("Erro: SDK não carregou. Recarregue a página.","error");return}
   authSetLoading(true);authMsg("");
-  var res=await sb.auth.signUp({email:email,password:pass});
-  if(res.error){
-    authSetLoading(false);
-    authMsg(res.error.message,"error");return;
-  }
-  if(res.data.user&&!res.data.user.email_confirmed_at){
-    // Tenta login direto (Supabase pode ter email confirm desabilitado)
+  try{
+    var res=await sb.auth.signUp({email:email,password:pass,options:{data:{name:"User"}}});
+    if(res.error){
+      authSetLoading(false);
+      authMsg(res.error.message,"error");return;
+    }
+    // Tenta login direto
     var login=await sb.auth.signInWithPassword({email:email,password:pass});
     if(login.error){
       authSetLoading(false);
       authMsg("Conta criada! Confirme seu email e depois entre.","success");return;
     }
     currentUser=login.data.user;
-  }else{
-    currentUser=res.data.user;
+    await migrateLocalToCloud();
+    await onAuthSuccess();
+  }catch(e){
+    authSetLoading(false);
+    authMsg("Erro: "+e.message,"error");
+    console.error("[Auth] Signup error:",e);
   }
-  // Migrar dados locais para a nuvem na primeira vez
-  await migrateLocalToCloud();
-  await onAuthSuccess();
 }
 
 async function onAuthSuccess(){
-  document.getElementById("authScreen").style.display="none";
-  await syncFromCloud();
+  try{
+    document.getElementById("authScreen").style.display="none";
+    await syncFromCloud();
+  }catch(e){
+    console.warn("[Auth] Sync on login failed:",e.message);
+  }
   startApp();
   startAutoSync();
 }
 
 async function authLogout(){
   if(!confirm("Sair da conta? Seus dados continuam salvos na nuvem."))return;
-  await syncToCloud();
-  await sb.auth.signOut();
+  try{await syncToCloud()}catch(e){}
+  try{await sb.auth.signOut()}catch(e){}
   currentUser=null;
   if(_syncTimer)clearInterval(_syncTimer);
   document.getElementById("authScreen").style.display="flex";
@@ -2289,49 +2311,53 @@ async function authLogout(){
 
 // ── SYNC: Cloud → Local ──
 async function syncFromCloud(){
-  if(!currentUser)return;
-  var res=await sb.from("user_data").select("data_key,data_value,version,updated_at").eq("user_id",currentUser.id);
-  if(res.error){console.warn("[Sync] Read error:",res.error.message);return}
-  if(!res.data||res.data.length===0)return;
-  res.data.forEach(function(row){
-    var sk=SYNC_KEYS.find(function(s){return s.key===row.data_key});
-    if(sk){sk.setLocal(row.data_value)}
-  });
-  console.log("[Sync] Loaded "+res.data.length+" keys from cloud");
+  if(!currentUser||!sb)return;
+  try{
+    var res=await sb.from("user_data").select("data_key,data_value,version,updated_at").eq("user_id",currentUser.id);
+    if(res.error){console.warn("[Sync] Read error:",res.error.message);return}
+    if(!res.data||res.data.length===0){console.log("[Sync] No cloud data yet");return}
+    res.data.forEach(function(row){
+      var sk=SYNC_KEYS.find(function(s){return s.key===row.data_key});
+      if(sk&&row.data_value!=null){sk.setLocal(row.data_value)}
+    });
+    console.log("[Sync] Loaded "+res.data.length+" keys from cloud");
+  }catch(e){console.warn("[Sync] syncFromCloud error:",e.message)}
 }
 
 // ── SYNC: Local → Cloud ──
 async function syncToCloud(){
-  if(!currentUser)return;
-  var promises=SYNC_KEYS.map(function(sk){
-    var val=sk.getLocal();
-    return sb.from("user_data").upsert({
-      user_id:currentUser.id,
-      data_key:sk.key,
-      data_value:val
-    },{onConflict:"user_id,data_key"});
-  });
-  var results=await Promise.all(promises);
-  var errors=results.filter(function(r){return r.error});
-  if(errors.length>0)console.warn("[Sync] Errors:",errors.map(function(e){return e.error.message}));
-  else console.log("[Sync] Saved "+SYNC_KEYS.length+" keys to cloud");
+  if(!currentUser||!sb)return;
+  try{
+    var promises=SYNC_KEYS.map(function(sk){
+      var val=sk.getLocal();
+      return sb.from("user_data").upsert({
+        user_id:currentUser.id,
+        data_key:sk.key,
+        data_value:val
+      },{onConflict:"user_id,data_key"});
+    });
+    var results=await Promise.all(promises);
+    var errors=results.filter(function(r){return r.error});
+    if(errors.length>0)console.warn("[Sync] Errors:",errors.map(function(e){return e.error.message}));
+    else console.log("[Sync] Saved "+SYNC_KEYS.length+" keys to cloud");
+  }catch(e){console.warn("[Sync] syncToCloud error:",e.message)}
 }
 
 // ── Migrar localStorage existente para cloud (primeira vez) ──
 async function migrateLocalToCloud(){
-  if(!currentUser)return;
-  // Verifica se já tem dados na nuvem
-  var check=await sb.from("user_data").select("data_key").eq("user_id",currentUser.id).limit(1);
-  if(check.data&&check.data.length>0)return; // Já tem dados
-  console.log("[Sync] Migrando dados locais para a nuvem...");
-  await syncToCloud();
+  if(!currentUser||!sb)return;
+  try{
+    var check=await sb.from("user_data").select("data_key").eq("user_id",currentUser.id).limit(1);
+    if(check.data&&check.data.length>0)return;
+    console.log("[Sync] Migrando dados locais para a nuvem...");
+    await syncToCloud();
+  }catch(e){console.warn("[Sync] Migration error:",e.message)}
 }
 
 // ── Auto-sync a cada 2 minutos ──
 function startAutoSync(){
   if(_syncTimer)clearInterval(_syncTimer);
   _syncTimer=setInterval(function(){syncToCloud()},120000);
-  // Também salva ao fechar
   window.addEventListener("beforeunload",function(){syncToCloud()});
 }
 
@@ -2340,28 +2366,42 @@ async function forceSync(){
   if(!currentUser){alert("Faça login primeiro");return}
   var indicator=document.getElementById("syncIndicator");
   if(indicator)indicator.textContent="Sincronizando...";
-  await syncToCloud();
-  if(indicator)indicator.textContent="Sincronizado ✓";
+  try{await syncToCloud();if(indicator)indicator.textContent="Sincronizado ✓"}
+  catch(e){if(indicator)indicator.textContent="Erro"}
   setTimeout(function(){if(indicator)indicator.textContent=""},3000);
 }
 
 // ── Boot: verificar sessão existente ──
 async function initAuth(){
-  document.getElementById("authVersion").textContent="v"+FC_VERSION;
+  var ver=document.getElementById("authVersion");
+  if(ver)ver.textContent="v"+FC_VERSION;
   var appVer=document.getElementById("appVersion");
   if(appVer)appVer.textContent="v"+FC_VERSION;
-  var session=await sb.auth.getSession();
-  if(session.data.session){
-    currentUser=session.data.session.user;
-    await onAuthSuccess();
+
+  if(!sb){
+    authMsg("Erro ao carregar. Verifique sua conexão e recarregue.","error");
+    return;
   }
-  // Escuta mudanças de auth
-  sb.auth.onAuthStateChange(function(event,session){
-    if(event==="SIGNED_OUT"){
-      currentUser=null;
-      document.getElementById("authScreen").style.display="flex";
+
+  try{
+    var session=await sb.auth.getSession();
+    if(session.data&&session.data.session){
+      currentUser=session.data.session.user;
+      await onAuthSuccess();
     }
-  });
+  }catch(e){
+    console.warn("[Auth] Session check error:",e.message);
+    authMsg("Erro de conexão. Tente novamente.","error");
+  }
+
+  try{
+    sb.auth.onAuthStateChange(function(event,session){
+      if(event==="SIGNED_OUT"){
+        currentUser=null;
+        document.getElementById("authScreen").style.display="flex";
+      }
+    });
+  }catch(e){}
 }
 
 /* ═══ BOTTOM NAV (MOBILE) ═══ */
