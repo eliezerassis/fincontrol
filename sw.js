@@ -1,5 +1,5 @@
-// FinControl Service Worker v2.3
-const CACHE_NAME = 'fincontrol-v2.3';
+// FinControl Service Worker v3.0
+const CACHE_NAME = 'fincontrol-v3';
 const ASSETS = [
   './',
   './portfolio-tracker.html',
@@ -38,9 +38,22 @@ self.addEventListener('fetch', function(event) {
   if (event.request.method !== 'GET') return;
   if (event.request.url.startsWith('chrome-extension')) return;
 
+  // Never cache API calls — let them go direct to network
+  var url = event.request.url;
+  if (url.indexOf('coingecko.com') !== -1 ||
+      url.indexOf('cryptocompare.com') !== -1 ||
+      url.indexOf('binance.com') !== -1 ||
+      url.indexOf('supabase.co') !== -1 ||
+      url.indexOf('exchangerate') !== -1 ||
+      url.indexOf('er-api.com') !== -1 ||
+      url.indexOf('jsdelivr.net') !== -1 ||
+      url.indexOf('unpkg.com') !== -1) {
+    return;
+  }
+
+  // Only cache app assets (same origin)
   event.respondWith(
     fetch(event.request).then(function(response) {
-      // Cache successful responses
       if (response && response.status === 200) {
         var responseClone = response.clone();
         caches.open(CACHE_NAME).then(function(cache) {
@@ -49,7 +62,6 @@ self.addEventListener('fetch', function(event) {
       }
       return response;
     }).catch(function() {
-      // Network failed, try cache
       return caches.match(event.request).then(function(cached) {
         return cached || new Response('Offline — abra o app quando estiver com internet.', {
           status: 503,
