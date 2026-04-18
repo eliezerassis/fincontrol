@@ -1132,6 +1132,7 @@ function renderWalletTable(positions,total,wId){
   var pnl=total-sorted.reduce(function(s,p){return s+p.costBasis},0);
   html+='</tbody><tfoot><tr style="border-top:2px solid #2a2a4a;background:#0e0e1e"><td colspan="6" style="font-weight:700;color:#fff;text-align:left">TOTAL</td><td style="font-weight:700;color:#fff;font-size:13px">'+fmt$(total)+'</td><td><span class="badge '+(pnl>=0?'badge-green':'badge-red')+'" style="font-weight:700">'+fmt$(pnl)+'</span></td><td></td></tr></tfoot></table></div>';
   return html;
+}
 
 function renderTableOriginal(positions,total){return renderTableInner(positions,total)}
 function renderTable(positions,total){return renderResponsiveTable?renderResponsiveTable(positions,total):renderTableInner(positions,total)}
