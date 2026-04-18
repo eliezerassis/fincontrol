@@ -386,6 +386,20 @@ body{padding-bottom:68px}
 .real-row-meta span{color:#8a8aaa}
 .real-btn-sell{background:linear-gradient(135deg,#ff8800,#ff6600);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
 .real-btn-sell:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(255,136,0,0.3)}
+
+/* ═══ QTY SLIDER (Exchange Style) ═══ */
+.qty-slider-wrap{margin:8px 0 14px;padding:0 2px}
+.qty-slider-track{position:relative;height:4px;background:#1a1a32;border-radius:2px;margin:12px 0}
+.qty-slider-fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,#7b61ff,#00e87e);border-radius:2px;transition:width .15s}
+.qty-slider-thumb{position:absolute;top:50%;width:18px;height:18px;background:#fff;border:3px solid #7b61ff;border-radius:50%;transform:translate(-50%,-50%);cursor:grab;transition:left .15s;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+.qty-slider-thumb:active{cursor:grabbing;transform:translate(-50%,-50%) scale(1.15);border-color:#00e87e}
+.qty-slider-dots{position:absolute;top:50%;left:0;right:0;display:flex;justify-content:space-between;transform:translateY(-50%);pointer-events:none;z-index:1}
+.qty-slider-dot{width:8px;height:8px;border-radius:50%;background:#2a2a4a;border:2px solid #1a1a32;transition:all .15s}
+.qty-slider-dot.active{background:#7b61ff;border-color:#7b61ff}
+.qty-slider-labels{display:flex;justify-content:space-between;margin-top:6px}
+.qty-slider-label{font-size:10px;color:#4a4a6a;cursor:pointer;padding:2px 4px;border-radius:4px;transition:all .15s;font-weight:600;-webkit-tap-highlight-color:transparent}
+.qty-slider-label:hover{color:#7b61ff}
+.qty-slider-label.active{color:#7b61ff}
 </style>
 </head>
 <body>
@@ -2801,8 +2815,26 @@ function showRealizarModal(wId,symbol){
   html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">';
   html+='<div><div class="label">Tipo</div><select id="rl_tipo" class="input" style="padding:10px 12px">'+typesHtml+'</select></div>';
   html+='<div><div class="label">Data</div><input id="rl_data" class="input" type="date" value="'+new Date().toISOString().slice(0,10)+'"></div>';
-  html+='<div><div class="label">Quantidade</div><input id="rl_qty" class="input" type="number" step="any" placeholder="0.00" max="'+maxQty+'" oninput="calcRealPreview(\''+symbol+'\')"><div style="font-size:10px;color:#5a5a7a;margin-top:2px;cursor:pointer" onclick="document.getElementById(\'rl_qty\').value='+maxQty+';calcRealPreview(\''+symbol+'\')">Usar máx: '+maxQty.toLocaleString("en-US",{maximumFractionDigits:6})+'</div></div>';
+  html+='<div><div class="label">Quantidade</div><input id="rl_qty" class="input" type="number" step="any" placeholder="0.00" max="'+maxQty+'" oninput="onQtyInput('+maxQty+',\''+symbol+'\')"></div>';
   html+='<div><div class="label">Preço de Venda (USD)</div><input id="rl_price" class="input" type="number" step="any" value="'+curPrice.toFixed(2)+'" oninput="calcRealPreview(\''+symbol+'\')"></div>';
+  html+='</div>';
+
+  // Slider de porcentagem estilo exchange
+  html+='<div class="qty-slider-wrap">';
+  html+='<div class="qty-slider-track" id="rlSliderTrack" onmousedown="startSliderDrag(event,'+maxQty+',\''+symbol+'\')" ontouchstart="startSliderDrag(event,'+maxQty+',\''+symbol+'\')">';
+  html+='<div class="qty-slider-fill" id="rlSliderFill" style="width:0%"></div>';
+  html+='<div class="qty-slider-dots">';
+  [0,25,50,75,100].forEach(function(p){html+='<div class="qty-slider-dot'+(p===0?' active':'')+'" data-pct="'+p+'"></div>'});
+  html+='</div>';
+  html+='<div class="qty-slider-thumb" id="rlSliderThumb" style="left:0%"></div>';
+  html+='</div>';
+  html+='<div class="qty-slider-labels">';
+  [0,25,50,75,100].forEach(function(p){
+    html+='<span class="qty-slider-label'+(p===0?' active':'')+'" onclick="setSliderPct('+p+','+maxQty+',\''+symbol+'\')">'+p+'%</span>';
+  });
+  html+='</div></div>';
+
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">';
   html+='<div><div class="label">Taxas (USD)</div><input id="rl_taxas" class="input" type="number" step="any" value="0" oninput="calcRealPreview(\''+symbol+'\')"></div>';
   html+='<div><div class="label">Observação</div><input id="rl_obs" class="input" placeholder="Opcional"></div>';
   html+='</div>';
@@ -2841,6 +2873,73 @@ function calcRealPreview(symbol){
   h+='<div><span style="color:#5a5a7a;font-size:10px">LUCRO/PREJUÍZO</span><div style="font-size:18px;font-weight:800;color:'+(pnl>=0?'#00e87e':'#ff4444')+'">'+fmt$(pnl)+'</div><div style="font-size:11px;color:'+(pnl>=0?'#00e87e':'#ff4444')+'">'+fmtP(pnlPct)+'</div></div>';
   h+='</div>';
   document.getElementById("rlPreview").innerHTML=h;
+}
+
+// ── Slider de porcentagem ──
+function setSliderPct(pct,maxQty,symbol){
+  var qty=maxQty*(pct/100);
+  document.getElementById("rl_qty").value=qty>0?parseFloat(qty.toFixed(8)):0;
+  updateSliderUI(pct);
+  calcRealPreview(symbol);
+}
+
+function onQtyInput(maxQty,symbol){
+  var qty=parseFloat(document.getElementById("rl_qty").value)||0;
+  var pct=maxQty>0?Math.min(100,(qty/maxQty)*100):0;
+  updateSliderUI(pct);
+  calcRealPreview(symbol);
+}
+
+function updateSliderUI(pct){
+  pct=Math.max(0,Math.min(100,pct));
+  var fill=document.getElementById("rlSliderFill");
+  var thumb=document.getElementById("rlSliderThumb");
+  if(fill)fill.style.width=pct+"%";
+  if(thumb)thumb.style.left=pct+"%";
+  // Update dots
+  document.querySelectorAll(".qty-slider-dot").forEach(function(d){
+    d.classList.toggle("active",parseFloat(d.dataset.pct)<=pct);
+  });
+  // Update labels
+  var steps=[0,25,50,75,100];
+  document.querySelectorAll(".qty-slider-label").forEach(function(l,i){
+    l.classList.toggle("active",steps[i]<=pct);
+  });
+}
+
+var _sliderDragging=false,_sliderMaxQty=0,_sliderSymbol="";
+function startSliderDrag(e,maxQty,symbol){
+  e.preventDefault();
+  _sliderDragging=true;_sliderMaxQty=maxQty;_sliderSymbol=symbol;
+  moveSlider(e);
+  document.addEventListener("mousemove",moveSlider);
+  document.addEventListener("mouseup",stopSliderDrag);
+  document.addEventListener("touchmove",moveSlider,{passive:false});
+  document.addEventListener("touchend",stopSliderDrag);
+}
+
+function moveSlider(e){
+  if(!_sliderDragging)return;
+  e.preventDefault();
+  var track=document.getElementById("rlSliderTrack");
+  if(!track)return;
+  var rect=track.getBoundingClientRect();
+  var clientX=e.touches?e.touches[0].clientX:e.clientX;
+  var pct=Math.max(0,Math.min(100,((clientX-rect.left)/rect.width)*100));
+  // Snap to nearest 5%
+  pct=Math.round(pct/5)*5;
+  var qty=_sliderMaxQty*(pct/100);
+  document.getElementById("rl_qty").value=qty>0?parseFloat(qty.toFixed(8)):0;
+  updateSliderUI(pct);
+  calcRealPreview(_sliderSymbol);
+}
+
+function stopSliderDrag(){
+  _sliderDragging=false;
+  document.removeEventListener("mousemove",moveSlider);
+  document.removeEventListener("mouseup",stopSliderDrag);
+  document.removeEventListener("touchmove",moveSlider);
+  document.removeEventListener("touchend",stopSliderDrag);
 }
 
 function doRealizacao(wId,symbol,avgPrice){

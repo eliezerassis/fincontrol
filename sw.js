@@ -1,5 +1,5 @@
-// FinControl Service Worker v2.2
-const CACHE_NAME = 'fincontrol-v2.2';
+// FinControl Service Worker v2.3
+const CACHE_NAME = 'fincontrol-v2.3';
 const ASSETS = [
   './',
   './portfolio-tracker.html',
