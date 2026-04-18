@@ -21,6 +21,8 @@
 <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512x512.png">
 <link rel="icon" type="image/png" sizes="96x96" href="icons/icon-96x96.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+<!-- Supabase JS -->
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0a0a14;color:#e0e0e0;font-family:'Segoe UI','Inter',sans-serif;min-height:100vh}
@@ -267,24 +269,31 @@ tr:hover td{background:#15152a}
 .orc-row-actions{width:100%;justify-content:flex-end;padding-top:4px;border-top:1px solid #12122a}
 }
 
-/* ═══ PIN LOCK SCREEN ═══ */
-.pin-screen{position:fixed;inset:0;background:#0a0a14;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:24px}
-.pin-logo{width:72px;height:72px;background:linear-gradient(135deg,#7b61ff,#00e87e);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;box-shadow:0 8px 32px rgba(123,97,255,0.3)}
-.pin-title{color:#fff;font-size:20px;font-weight:700;letter-spacing:-0.3px}
-.pin-subtitle{color:#5a5a7a;font-size:13px;margin-top:-12px}
-.pin-dots{display:flex;gap:14px;margin:8px 0}
-.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid #2a2a4a;background:transparent;transition:all .2s}
-.pin-dot.filled{background:#7b61ff;border-color:#7b61ff;box-shadow:0 0 12px rgba(123,97,255,0.4)}
-.pin-dot.error{border-color:#ff4444;background:#ff4444;animation:pinShake .4s}
-.pin-keypad{display:grid;grid-template-columns:repeat(3,72px);gap:12px;margin-top:8px}
-.pin-key{width:72px;height:72px;border-radius:50%;background:#12122a;border:1px solid #2a2a4a;color:#fff;font-size:24px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-tap-highlight-color:transparent}
-.pin-key:active{background:#7b61ff;border-color:#7b61ff;transform:scale(0.92)}
-.pin-key.pin-key-empty{visibility:hidden}
-.pin-key-back{font-size:18px;color:#6a6a8a}
-.pin-msg{color:#ff4444;font-size:13px;min-height:20px;text-align:center}
-.pin-setup-wrap{background:#12122a;border:1px solid #2a2a4a;border-radius:16px;padding:28px;max-width:340px;width:90%;text-align:center}
-.pin-setup-wrap .pin-title{margin-bottom:6px}
-@keyframes pinShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+/* ═══ AUTH LOGIN SCREEN ═══ */
+.auth-screen{position:fixed;inset:0;background:linear-gradient(160deg,#0a0a14 0%,#0d0d24 40%,#12102a 100%);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.auth-card{background:#12122a;border:1px solid #2a2a4a;border-radius:20px;padding:36px 32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.auth-logo{width:72px;height:72px;background:linear-gradient(135deg,#7b61ff,#00e87e);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;box-shadow:0 8px 32px rgba(123,97,255,0.3);margin:0 auto 16px}
+.auth-title{color:#fff;font-size:22px;font-weight:700;text-align:center;margin-bottom:4px}
+.auth-subtitle{color:#5a5a7a;font-size:13px;text-align:center;margin-bottom:24px}
+.auth-version{color:#2a2a4a;font-size:10px;text-align:center;margin-bottom:20px;letter-spacing:1px}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;color:#6a6a8a;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600}
+.auth-field input{width:100%;background:#0a0a14;border:1px solid #2a2a4a;border-radius:10px;padding:12px 16px;color:#fff;font-size:15px;outline:none;transition:border-color .2s}
+.auth-field input:focus{border-color:#7b61ff}
+.auth-btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:6px}
+.auth-btn-primary{background:linear-gradient(135deg,#7b61ff,#6a50ee);color:#fff;box-shadow:0 4px 16px rgba(123,97,255,0.3)}
+.auth-btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(123,97,255,0.4)}
+.auth-btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.auth-btn-ghost{background:transparent;border:1px solid #2a2a4a;color:#8888aa;margin-top:10px}
+.auth-btn-ghost:hover{border-color:#7b61ff;color:#fff}
+.auth-msg{text-align:center;font-size:12px;min-height:18px;margin-top:12px}
+.auth-msg.error{color:#ff4444}
+.auth-msg.success{color:#00e87e}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:#2a2a4a;font-size:10px;text-transform:uppercase;letter-spacing:1px}
+.auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:#1f1f35}
+.auth-footer{text-align:center;margin-top:24px;color:#2a2a4a;font-size:10px}
+.auth-loader{display:inline-block;width:16px;height:16px;border:2px solid #2a2a4a;border-top-color:#7b61ff;border-radius:50%;animation:authSpin .6s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes authSpin{to{transform:rotate(360deg)}}
 
 /* ═══ BOTTOM NAV (MOBILE) ═══ */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#0f0f1e;border-top:1px solid #1f1f35;z-index:100;padding:4px 0;padding-bottom:env(safe-area-inset-bottom,4px)}
@@ -336,14 +345,28 @@ body{padding-bottom:68px}
 </head>
 <body>
 
-<!-- PIN LOCK SCREEN -->
-<div id="pinScreen" class="pin-screen" style="display:none">
-  <div class="pin-logo">FC</div>
-  <div class="pin-title" id="pinTitle">Digite seu PIN</div>
-  <div class="pin-subtitle" id="pinSubtitle">Para acessar o FinControl</div>
-  <div class="pin-dots" id="pinDots"></div>
-  <div class="pin-msg" id="pinMsg"></div>
-  <div class="pin-keypad" id="pinKeypad"></div>
+<!-- AUTH LOGIN SCREEN -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">FC</div>
+    <div class="auth-title">FinControl</div>
+    <div class="auth-subtitle">Controle financeiro premium</div>
+    <div class="auth-version" id="authVersion">v2.0.0</div>
+    <div id="authForm">
+      <div class="auth-field">
+        <label>Email</label>
+        <input type="email" id="authEmail" placeholder="seu@email.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label>Senha</label>
+        <input type="password" id="authPass" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="auth-btn auth-btn-primary" id="authLoginBtn" onclick="authLogin()">Entrar</button>
+      <button class="auth-btn auth-btn-ghost" id="authSignupBtn" onclick="authSignup()">Criar conta</button>
+      <div class="auth-msg" id="authMsg"></div>
+    </div>
+    <div class="auth-footer">Dados criptografados e sincronizados na nuvem</div>
+  </div>
 </div>
 
 <!-- HEADER -->
@@ -354,6 +377,7 @@ body{padding-bottom:68px}
       <div>
         <h1>FinControl</h1>
         <div class="subtitle" id="subtitle">Carregando...</div>
+        <div style="font-size:9px;color:#3a3a5a;letter-spacing:.5px" id="appVersion">v2.0.0</div>
       </div>
     </div>
     <div class="header-actions">
@@ -370,6 +394,9 @@ body{padding-bottom:68px}
           <div class="dropdown-sep"></div>
           <div class="dropdown-item" id="menuInstallBtn" style="display:none" onclick="pwaInstall();closeDropdown()">📲 Instalar App</div>
           <div class="dropdown-item" onclick="fcRequestNotif();closeDropdown()">🔔 Ativar Notificacoes</div>
+          <div class="dropdown-sep"></div>
+          <div class="dropdown-item" onclick="forceSync();closeDropdown()">☁ Sincronizar Agora <span id="syncIndicator" style="color:#00e87e;font-size:10px;margin-left:4px"></span></div>
+          <div class="dropdown-item" style="color:#ff6666" onclick="authLogout();closeDropdown()">⏻ Sair da Conta</div>
         </div>
       </div>
     </div>
@@ -392,7 +419,7 @@ body{padding-bottom:68px}
   <div id="errorBox" class="error" style="display:none"></div>
   <div id="connectionsPanel" style="display:none"></div>
   <div id="mainContent"></div>
-  <div class="footer" id="footerInfo">CoinGecko · CryptoCompare · Binance (auto 60s) · Dados salvos no navegador</div>
+  <div class="footer" id="footerInfo">FinControl v2.0.0 · CoinGecko · CryptoCompare · Binance (auto 60s) · Sync ☁</div>
 </div>
 
 <!-- BOTTOM NAV (MOBILE) -->
@@ -437,7 +464,7 @@ function loadState(){
     {symbol:"MX",quantity:28.171,avgPrice:1.77,targetPrice:null}
   ],connection:null,syncStatus:null,defiPositions:[]}];
 }
-function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(wallets));}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(wallets));}catch(e){} debouncedSync()}
 wallets=loadState();
 
 function loadEmerg(){
@@ -458,14 +485,14 @@ function loadEmerg(){
     ]
   }];
 }
-function saveEmerg(){try{localStorage.setItem(EMERG_KEY,JSON.stringify(emergBlocos));}catch(e){}}
+function saveEmerg(){try{localStorage.setItem(EMERG_KEY,JSON.stringify(emergBlocos));}catch(e){} debouncedSync()}
 emergBlocos=loadEmerg();
 
 function loadAporte(){
   try{var d=localStorage.getItem(APORTE_KEY);if(d)return JSON.parse(d);}catch(e){}
   return[];
 }
-function saveAporte(){try{localStorage.setItem(APORTE_KEY,JSON.stringify(aporteBlocos));}catch(e){}}
+function saveAporte(){try{localStorage.setItem(APORTE_KEY,JSON.stringify(aporteBlocos));}catch(e){} debouncedSync()}
 aporteBlocos=loadAporte();
 
 /* ═══ ORÇAMENTO STATE ═══ */
@@ -476,7 +503,7 @@ let orcMes,orcAno;
 
 function orcKey(m,a){return a+"-"+String(m).padStart(2,"0")}
 function loadOrc(){try{var d=localStorage.getItem(ORC_KEY);if(d)return JSON.parse(d);}catch(e){}return{}}
-function saveOrc(){try{localStorage.setItem(ORC_KEY,JSON.stringify(orcData));}catch(e){}}
+function saveOrc(){try{localStorage.setItem(ORC_KEY,JSON.stringify(orcData));}catch(e){} debouncedSync()}
 orcData=loadOrc();
 
 function migrateOrcEntry(entry){
@@ -503,8 +530,15 @@ var META_LP_KEY="fincontrol_metalp_v1";
 var parcelas=[];var metasLP=[];
 try{var _p=localStorage.getItem(PARC_KEY);if(_p)parcelas=JSON.parse(_p);}catch(e){}
 try{var _ml=localStorage.getItem(META_LP_KEY);if(_ml)metasLP=JSON.parse(_ml);}catch(e){}
-function saveParc(){try{localStorage.setItem(PARC_KEY,JSON.stringify(parcelas));}catch(e){}}
-function saveMetaLP(){try{localStorage.setItem(META_LP_KEY,JSON.stringify(metasLP));}catch(e){}}
+function saveParc(){try{localStorage.setItem(PARC_KEY,JSON.stringify(parcelas));}catch(e){} debouncedSync()}
+function saveMetaLP(){try{localStorage.setItem(META_LP_KEY,JSON.stringify(metasLP));}catch(e){} debouncedSync()}
+
+// Debounced sync — espera 5s após última mudança para sincronizar
+var _debounceSyncTimer=null;
+function debouncedSync(){
+  if(_debounceSyncTimer)clearTimeout(_debounceSyncTimer);
+  _debounceSyncTimer=setTimeout(function(){syncToCloud()},5000);
+}
 function getOrcMes(m,a){
   var k=orcKey(m,a);
   if(orcData[k]){migrateOrcEntry(orcData[k]);return orcData[k];}
@@ -2160,118 +2194,174 @@ if(localStorage.getItem('fc_notif')==='1'&&'Notification' in window&&Notificatio
   scheduleNotifCheck();
 }
 
-/* ═══ PIN LOCK SYSTEM ═══ */
-var PIN_KEY="fincontrol_pin_v1";
-var PIN_LEN=4;
-var _pinInput="";
-var _pinMode=""; // "unlock","setup","confirm"
-var _pinSetupFirst="";
+/* ═══ SUPABASE AUTH + DATABASE ═══ */
+var FC_VERSION="2.0.0";
+var SUPABASE_URL="https://oavfbsrlweujzhcwkpzy.supabase.co";
+var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hdmZic3Jsd2V1anpoY3drcHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTcxMzIsImV4cCI6MjA5MjA5MzEzMn0.YsCBRPP4BxD0jvCSyd4k3OgIGRczhv3pA5scvWqsQM8";
+var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+var currentUser=null;
+var _syncTimer=null;
 
-async function hashPin(pin){
-  var enc=new TextEncoder();
-  var buf=await crypto.subtle.digest("SHA-256",enc.encode("fc_salt_"+pin));
-  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0")}).join("");
+// Data keys que sincronizam com Supabase
+var SYNC_KEYS=[
+  {key:"wallets",getLocal:function(){return wallets},setLocal:function(v){wallets=v;saveState()}},
+  {key:"emergenciais",getLocal:function(){return emergBlocos},setLocal:function(v){emergBlocos=v;saveEmerg()}},
+  {key:"aportes",getLocal:function(){return aporteBlocos},setLocal:function(v){aporteBlocos=v;saveAporte()}},
+  {key:"orcamento",getLocal:function(){return orcData},setLocal:function(v){orcData=v;saveOrc()}},
+  {key:"parcelas",getLocal:function(){return parcelas},setLocal:function(v){parcelas=v;saveParc()}},
+  {key:"metas_lp",getLocal:function(){return metasLP},setLocal:function(v){metasLP=v;saveMetaLP()}}
+];
+
+function authMsg(msg,type){
+  var el=document.getElementById("authMsg");
+  el.textContent=msg;
+  el.className="auth-msg "+(type||"");
 }
 
-function hasPinSet(){return!!localStorage.getItem(PIN_KEY)}
+function authSetLoading(loading){
+  var btn=document.getElementById("authLoginBtn");
+  var btn2=document.getElementById("authSignupBtn");
+  btn.disabled=loading;btn2.disabled=loading;
+  if(loading)btn.innerHTML='<span class="auth-loader"></span> Aguarde...';
+  else btn.textContent="Entrar";
+}
 
-function initPinScreen(){
-  if(hasPinSet()){
-    _pinMode="unlock";
-    showPinUI("Digite seu PIN","Para acessar o FinControl");
+async function authLogin(){
+  var email=(document.getElementById("authEmail").value||"").trim();
+  var pass=document.getElementById("authPass").value||"";
+  if(!email||!pass){authMsg("Preencha email e senha","error");return}
+  authSetLoading(true);authMsg("");
+  var res=await sb.auth.signInWithPassword({email:email,password:pass});
+  if(res.error){
+    authSetLoading(false);
+    authMsg(res.error.message==="Invalid login credentials"?"Email ou senha incorretos":res.error.message,"error");
+    return;
+  }
+  currentUser=res.data.user;
+  await onAuthSuccess();
+}
+
+async function authSignup(){
+  var email=(document.getElementById("authEmail").value||"").trim();
+  var pass=document.getElementById("authPass").value||"";
+  if(!email){authMsg("Informe seu email","error");return}
+  if(!pass||pass.length<6){authMsg("Senha deve ter no mínimo 6 caracteres","error");return}
+  authSetLoading(true);authMsg("");
+  var res=await sb.auth.signUp({email:email,password:pass});
+  if(res.error){
+    authSetLoading(false);
+    authMsg(res.error.message,"error");return;
+  }
+  if(res.data.user&&!res.data.user.email_confirmed_at){
+    // Tenta login direto (Supabase pode ter email confirm desabilitado)
+    var login=await sb.auth.signInWithPassword({email:email,password:pass});
+    if(login.error){
+      authSetLoading(false);
+      authMsg("Conta criada! Confirme seu email e depois entre.","success");return;
+    }
+    currentUser=login.data.user;
   }else{
-    _pinMode="setup";
-    showPinUI("Criar PIN","Escolha um PIN de "+PIN_LEN+" dígitos");
+    currentUser=res.data.user;
   }
-  document.getElementById("pinScreen").style.display="flex";
+  // Migrar dados locais para a nuvem na primeira vez
+  await migrateLocalToCloud();
+  await onAuthSuccess();
 }
 
-function showPinUI(title,subtitle){
-  _pinInput="";
-  document.getElementById("pinTitle").textContent=title;
-  document.getElementById("pinSubtitle").textContent=subtitle;
-  document.getElementById("pinMsg").textContent="";
-  renderPinDots();
-  renderPinKeypad();
-}
-
-function renderPinDots(){
-  var h="";
-  for(var i=0;i<PIN_LEN;i++){
-    h+='<div class="pin-dot'+(i<_pinInput.length?" filled":"")+'"></div>';
-  }
-  document.getElementById("pinDots").innerHTML=h;
-}
-
-function renderPinKeypad(){
-  var nums=[1,2,3,4,5,6,7,8,9,"",0,"back"];
-  var h="";
-  nums.forEach(function(n){
-    if(n===""){h+='<div class="pin-key pin-key-empty"></div>';}
-    else if(n==="back"){h+='<div class="pin-key pin-key-back" onclick="pinBackspace()">⌫</div>';}
-    else{h+='<div class="pin-key" onclick="pinPress('+n+')">'+n+'</div>';}
-  });
-  document.getElementById("pinKeypad").innerHTML=h;
-}
-
-function pinPress(n){
-  if(_pinInput.length>=PIN_LEN)return;
-  _pinInput+=String(n);
-  renderPinDots();
-  if(_pinInput.length===PIN_LEN){
-    setTimeout(pinSubmit,200);
-  }
-}
-
-function pinBackspace(){
-  if(_pinInput.length>0){
-    _pinInput=_pinInput.slice(0,-1);
-    renderPinDots();
-  }
-}
-
-async function pinSubmit(){
-  if(_pinMode==="setup"){
-    _pinSetupFirst=_pinInput;
-    _pinMode="confirm";
-    showPinUI("Confirme o PIN","Digite o mesmo PIN novamente");
-  }else if(_pinMode==="confirm"){
-    if(_pinInput===_pinSetupFirst){
-      var h=await hashPin(_pinInput);
-      localStorage.setItem(PIN_KEY,h);
-      pinUnlock();
-    }else{
-      pinError("PINs não coincidem. Tente novamente.");
-      _pinMode="setup";
-      _pinSetupFirst="";
-      setTimeout(function(){showPinUI("Criar PIN","Escolha um PIN de "+PIN_LEN+" dígitos")},1200);
-    }
-  }else if(_pinMode==="unlock"){
-    var h=await hashPin(_pinInput);
-    var stored=localStorage.getItem(PIN_KEY);
-    if(h===stored){
-      pinUnlock();
-    }else{
-      pinError("PIN incorreto");
-      setTimeout(function(){
-        _pinInput="";
-        renderPinDots();
-        document.getElementById("pinMsg").textContent="";
-      },1000);
-    }
-  }
-}
-
-function pinError(msg){
-  document.getElementById("pinMsg").textContent=msg;
-  var dots=document.querySelectorAll(".pin-dot");
-  dots.forEach(function(d){d.classList.add("error")});
-  if(navigator.vibrate)navigator.vibrate([100,50,100]);
-}
-
-function pinUnlock(){
-  document.getElementById("pinScreen").style.display="none";
+async function onAuthSuccess(){
+  document.getElementById("authScreen").style.display="none";
+  await syncFromCloud();
   startApp();
+  startAutoSync();
+}
+
+async function authLogout(){
+  if(!confirm("Sair da conta? Seus dados continuam salvos na nuvem."))return;
+  await syncToCloud();
+  await sb.auth.signOut();
+  currentUser=null;
+  if(_syncTimer)clearInterval(_syncTimer);
+  document.getElementById("authScreen").style.display="flex";
+  authSetLoading(false);authMsg("");
+  document.getElementById("authEmail").value="";
+  document.getElementById("authPass").value="";
+}
+
+// ── SYNC: Cloud → Local ──
+async function syncFromCloud(){
+  if(!currentUser)return;
+  var res=await sb.from("user_data").select("data_key,data_value,version,updated_at").eq("user_id",currentUser.id);
+  if(res.error){console.warn("[Sync] Read error:",res.error.message);return}
+  if(!res.data||res.data.length===0)return;
+  res.data.forEach(function(row){
+    var sk=SYNC_KEYS.find(function(s){return s.key===row.data_key});
+    if(sk){sk.setLocal(row.data_value)}
+  });
+  console.log("[Sync] Loaded "+res.data.length+" keys from cloud");
+}
+
+// ── SYNC: Local → Cloud ──
+async function syncToCloud(){
+  if(!currentUser)return;
+  var promises=SYNC_KEYS.map(function(sk){
+    var val=sk.getLocal();
+    return sb.from("user_data").upsert({
+      user_id:currentUser.id,
+      data_key:sk.key,
+      data_value:val
+    },{onConflict:"user_id,data_key"});
+  });
+  var results=await Promise.all(promises);
+  var errors=results.filter(function(r){return r.error});
+  if(errors.length>0)console.warn("[Sync] Errors:",errors.map(function(e){return e.error.message}));
+  else console.log("[Sync] Saved "+SYNC_KEYS.length+" keys to cloud");
+}
+
+// ── Migrar localStorage existente para cloud (primeira vez) ──
+async function migrateLocalToCloud(){
+  if(!currentUser)return;
+  // Verifica se já tem dados na nuvem
+  var check=await sb.from("user_data").select("data_key").eq("user_id",currentUser.id).limit(1);
+  if(check.data&&check.data.length>0)return; // Já tem dados
+  console.log("[Sync] Migrando dados locais para a nuvem...");
+  await syncToCloud();
+}
+
+// ── Auto-sync a cada 2 minutos ──
+function startAutoSync(){
+  if(_syncTimer)clearInterval(_syncTimer);
+  _syncTimer=setInterval(function(){syncToCloud()},120000);
+  // Também salva ao fechar
+  window.addEventListener("beforeunload",function(){syncToCloud()});
+}
+
+// ── Forçar sync manual ──
+async function forceSync(){
+  if(!currentUser){alert("Faça login primeiro");return}
+  var indicator=document.getElementById("syncIndicator");
+  if(indicator)indicator.textContent="Sincronizando...";
+  await syncToCloud();
+  if(indicator)indicator.textContent="Sincronizado ✓";
+  setTimeout(function(){if(indicator)indicator.textContent=""},3000);
+}
+
+// ── Boot: verificar sessão existente ──
+async function initAuth(){
+  document.getElementById("authVersion").textContent="v"+FC_VERSION;
+  var appVer=document.getElementById("appVersion");
+  if(appVer)appVer.textContent="v"+FC_VERSION;
+  var session=await sb.auth.getSession();
+  if(session.data.session){
+    currentUser=session.data.session.user;
+    await onAuthSuccess();
+  }
+  // Escuta mudanças de auth
+  sb.auth.onAuthStateChange(function(event,session){
+    if(event==="SIGNED_OUT"){
+      currentUser=null;
+      document.getElementById("authScreen").style.display="flex";
+    }
+  });
 }
 
 /* ═══ BOTTOM NAV (MOBILE) ═══ */
@@ -2336,8 +2426,8 @@ function startApp(){
   startPortPolling();
 }
 
-// Boot: check PIN
-initPinScreen();
+// Boot: check auth
+initAuth();
 </script>
 </body>
 </html>
