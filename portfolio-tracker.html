@@ -346,6 +346,46 @@ body{padding-bottom:68px}
 @media(min-width:769px){
 .resp-cards{display:none!important}
 }
+
+/* ═══ EVOLUTION CHART ═══ */
+.evo-card{background:#0f0f22;border:1px solid #1a1a32;border-radius:14px;padding:20px;margin-top:16px}
+.evo-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.evo-title{font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.evo-period{display:flex;gap:4px}
+.evo-period-btn{background:#0a0a14;border:1px solid #2a2a4a;color:#6a6a8a;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s}
+.evo-period-btn.active{background:#7b61ff22;border-color:#7b61ff;color:#7b61ff}
+.evo-canvas-wrap{position:relative;width:100%;height:180px}
+.evo-canvas-wrap canvas{width:100%;height:100%}
+.evo-stats{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+.evo-stat{text-align:center;flex:1;min-width:80px}
+.evo-stat-label{font-size:9px;color:#5a5a7a;text-transform:uppercase;letter-spacing:.5px}
+.evo-stat-value{font-size:14px;font-weight:700;margin-top:2px}
+.evo-empty{color:#2a2a44;font-size:12px;text-align:center;padding:30px 0;font-style:italic}
+
+/* ═══ REALIZAÇÕES ═══ */
+.real-card{background:#0f0f22;border:1px solid #1a1a32;border-radius:14px;padding:20px;margin-top:16px}
+.real-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.real-title{font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.real-summary{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.real-summary-box{background:#0a0a14;border-radius:10px;padding:12px 16px;flex:1;min-width:120px;text-align:center}
+.real-summary-label{font-size:9px;color:#5a5a7a;text-transform:uppercase;letter-spacing:.5px}
+.real-summary-val{font-size:16px;font-weight:700;margin-top:2px}
+.real-row{background:#0a0a18;border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid transparent;transition:all .2s}
+.real-row:hover{border-color:#22223a}
+.real-row-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.real-row-left{display:flex;align-items:center;gap:10px}
+.real-row-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.real-row-info{display:flex;flex-direction:column}
+.real-row-coin{font-size:14px;font-weight:700;color:#fff}
+.real-row-type{font-size:10px;color:#5a5a7a}
+.real-row-right{text-align:right}
+.real-row-pnl{font-size:15px;font-weight:700}
+.real-row-detail{font-size:10px;color:#5a5a7a}
+.real-row-bottom{display:flex;gap:16px;margin-top:8px;padding-top:8px;border-top:1px solid #12122a;flex-wrap:wrap}
+.real-row-meta{font-size:11px;color:#4a4a6a}
+.real-row-meta span{color:#8a8aaa}
+.real-btn-sell{background:linear-gradient(135deg,#ff8800,#ff6600);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
+.real-btn-sell:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(255,136,0,0.3)}
 </style>
 </head>
 <body>
@@ -653,6 +693,8 @@ async function fetchPrices(){
     savePortPriceCache();
     document.getElementById("errorBox").style.display="none";
     dot.className="status-dot ok";
+    // Salvar snapshot do patrimônio
+    try{takeSnapshot()}catch(e){}
   }else{
     if(!loadPortPriceCache()){priceSource="offline";}
     document.getElementById("errorBox").textContent="APIs indisponíveis — usando "+priceSource;
@@ -912,6 +954,10 @@ function renderConsolidated(cons,totalVal){
   });
   html+='</div>';
 
+  // Gráfico de evolução (consolidado)
+  var evoConsResult=renderEvoSection(null);
+  html+=evoConsResult.html;
+
   // Table
   html+=renderTable(cons,totalVal);
 
@@ -936,6 +982,11 @@ function renderConsolidated(cons,totalVal){
   html+=renderTargetPanel(cons);
 
   document.getElementById("mainContent").innerHTML=html;
+
+  // Renderizar canvas do gráfico consolidado
+  if(evoConsResult.canvasId){
+    setTimeout(function(){renderEvoChart(evoConsResult.canvasId,evoConsResult.data)},50);
+  }
 }
 
 function renderTargetPanel(positions){
@@ -1031,16 +1082,56 @@ function renderWallet(wId){
   html+='<div class="kpi"><div class="kpi-label">% Patrimônio</div><div class="kpi-value">'+(totalVal>0?(ws.total/totalVal*100).toFixed(1)+'%':'0%')+'</div></div>';
   html+='</div>';
 
+  // Gráfico de evolução
+  var evoResult=renderEvoSection(w.id);
+  html+=evoResult.html;
+
   if(w.positions.length>0){
     var enriched=w.positions.map(enrich);
-    html+=renderTable(enriched,ws.total);
+    html+=renderWalletTable(enriched,ws.total,w.id);
     html+=renderTargetPanel(enriched);
   }else{
     html+='<div class="card" style="text-align:center;padding:40px;color:#6a6a8a"><div style="font-size:32px;margin-bottom:12px">'+ti.i+'</div><div style="margin-bottom:16px;font-size:14px">Nenhum ativo nesta carteira</div>';
     html+='<button class="btn btn-green" style="font-size:14px;padding:12px 24px" onclick="openAddAssetModal(\''+w.id+'\')">+ Adicionar Primeiro Ativo</button></div>';
   }
+
+  // Realizações
+  html+=renderRealizacoesSection(w.id);
+
   document.getElementById("mainContent").innerHTML=html;
+
+  // Renderizar canvas do gráfico após inserir no DOM
+  if(evoResult.canvasId){
+    setTimeout(function(){renderEvoChart(evoResult.canvasId,evoResult.data)},50);
+  }
 }
+
+// Tabela da carteira com botão "Realizar"
+function renderWalletTable(positions,total,wId){
+  var sorted=positions.slice().sort(function(a,b){return b.currentValue-a.currentValue});
+  var html='<div class="card" style="padding:0;overflow:auto"><table style="min-width:900px"><thead><tr>';
+  ["Ativo","Qtd","P.Médio","P.Atual","24h","Alvo","Valor","P&L",""].forEach(function(h){
+    var isTarget=["Alvo"].indexOf(h)>=0;
+    html+='<th style="'+(h==='Ativo'?'text-align:left':'')+(isTarget?';color:#ffaa00':'')+'">'+h+'</th>';
+  });
+  html+='</tr></thead><tbody>';
+  sorted.forEach(function(p,i){
+    var c=AC[i%AC.length];
+    html+='<tr>';
+    html+='<td style="text-align:left"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+c+';margin-right:6px;vertical-align:middle"></span><span style="font-weight:600;color:#fff">'+p.symbol+'</span></td>';
+    html+='<td>'+p.quantity.toLocaleString("en-US",{maximumFractionDigits:4})+'</td>';
+    html+='<td>'+fmt$(p.avgPrice,p.avgPrice<1?4:2)+'</td>';
+    html+='<td style="font-weight:600;color:#fff">'+fmt$(p.currentPrice,p.currentPrice<1?4:2)+'</td>';
+    html+='<td style="color:'+(p.change24h>=0?'#00e87e':'#ff4444')+'">'+fmtP(p.change24h)+'</td>';
+    html+='<td style="font-weight:600;color:#ffaa00">'+(p.targetPrice?fmt$(p.targetPrice,p.targetPrice<1?4:2):'<span style="color:#3a3a5a">--</span>')+'</td>';
+    html+='<td style="font-weight:600;color:#fff">'+fmt$(p.currentValue)+'</td>';
+    html+='<td><span class="badge '+(p.pnl>=0?'badge-green':'badge-red')+'">'+fmt$(p.pnl)+' ('+fmtP(p.pnlPct)+')</span></td>';
+    html+='<td><button class="real-btn-sell" onclick="showRealizarModal(\''+wId+'\',\''+p.symbol+'\')">Realizar</button></td>';
+    html+='</tr>';
+  });
+  var pnl=total-sorted.reduce(function(s,p){return s+p.costBasis},0);
+  html+='</tbody><tfoot><tr style="border-top:2px solid #2a2a4a;background:#0e0e1e"><td colspan="6" style="font-weight:700;color:#fff;text-align:left">TOTAL</td><td style="font-weight:700;color:#fff;font-size:13px">'+fmt$(total)+'</td><td><span class="badge '+(pnl>=0?'badge-green':'badge-red')+'" style="font-weight:700">'+fmt$(pnl)+'</span></td><td></td></tr></tfoot></table></div>';
+  return html;
 
 function renderTableOriginal(positions,total){return renderTableInner(positions,total)}
 function renderTable(positions,total){return renderResponsiveTable?renderResponsiveTable(positions,total):renderTableInner(positions,total)}
@@ -2231,7 +2322,8 @@ var SYNC_KEYS=[
   {key:"aportes",getLocal:function(){return aporteBlocos},setLocal:function(v){aporteBlocos=v;try{localStorage.setItem(APORTE_KEY,JSON.stringify(v))}catch(e){}}},
   {key:"orcamento",getLocal:function(){return orcData},setLocal:function(v){orcData=v;try{localStorage.setItem(ORC_KEY,JSON.stringify(v))}catch(e){}}},
   {key:"parcelas",getLocal:function(){return parcelas},setLocal:function(v){parcelas=v;try{localStorage.setItem(PARC_KEY,JSON.stringify(v))}catch(e){}}},
-  {key:"metas_lp",getLocal:function(){return metasLP},setLocal:function(v){metasLP=v;try{localStorage.setItem(META_LP_KEY,JSON.stringify(v))}catch(e){}}}
+  {key:"metas_lp",getLocal:function(){return metasLP},setLocal:function(v){metasLP=v;try{localStorage.setItem(META_LP_KEY,JSON.stringify(v))}catch(e){}}},
+  {key:"snapshots",getLocal:function(){return snapshots},setLocal:function(v){snapshots=v;try{localStorage.setItem(SNAP_KEY,JSON.stringify(v))}catch(e){}}}
 ];
 
 function authMsg(msg,type){
@@ -2415,6 +2507,333 @@ async function initAuth(){
       }
     });
   }catch(e){}
+}
+
+/* ═══ SNAPSHOTS (EVOLUÇÃO PATRIMONIAL) ═══ */
+var SNAP_KEY="fincontrol_snapshots_v1";
+var snapshots=[];
+try{var _sn=localStorage.getItem(SNAP_KEY);if(_sn)snapshots=JSON.parse(_sn)}catch(e){}
+function saveSnapshots(){try{localStorage.setItem(SNAP_KEY,JSON.stringify(snapshots))}catch(e){}}
+
+function takeSnapshot(){
+  var today=new Date().toISOString().slice(0,10);
+  // Um snapshot por dia
+  var existing=snapshots.find(function(s){return s.date===today});
+  var cons=getConsolidated();
+  var totalVal=cons.reduce(function(s,p){return s+p.currentValue},0);
+  // Snapshot por carteira
+  var byWallet={};
+  wallets.forEach(function(w){
+    var ws=getWalletStats(w.id);
+    byWallet[w.id]={name:w.name,value:ws.total,cost:ws.cost};
+  });
+  var snap={date:today,total:totalVal,wallets:byWallet};
+  if(existing){
+    var idx=snapshots.indexOf(existing);
+    snapshots[idx]=snap;
+  }else{
+    snapshots.push(snap);
+  }
+  // Manter máximo 365 dias
+  if(snapshots.length>365)snapshots=snapshots.slice(-365);
+  saveSnapshots();
+}
+
+function getWalletSnapshots(wId,days){
+  days=days||30;
+  var cutoff=new Date();cutoff.setDate(cutoff.getDate()-days);
+  var cutStr=cutoff.toISOString().slice(0,10);
+  return snapshots.filter(function(s){
+    return s.date>=cutStr&&s.wallets&&s.wallets[wId];
+  }).map(function(s){
+    return{date:s.date,value:s.wallets[wId].value,cost:s.wallets[wId].cost};
+  }).sort(function(a,b){return a.date.localeCompare(b.date)});
+}
+
+function getAllSnapshots(days){
+  days=days||30;
+  var cutoff=new Date();cutoff.setDate(cutoff.getDate()-days);
+  var cutStr=cutoff.toISOString().slice(0,10);
+  return snapshots.filter(function(s){return s.date>=cutStr})
+    .sort(function(a,b){return a.date.localeCompare(b.date)});
+}
+
+function renderEvoChart(canvasId,data){
+  var canvas=document.getElementById(canvasId);
+  if(!canvas||data.length<2)return;
+  var ctx=canvas.getContext("2d");
+  var dpr=window.devicePixelRatio||1;
+  var rect=canvas.parentElement.getBoundingClientRect();
+  canvas.width=rect.width*dpr;canvas.height=rect.height*dpr;
+  canvas.style.width=rect.width+"px";canvas.style.height=rect.height+"px";
+  ctx.scale(dpr,dpr);
+  var W=rect.width,H=rect.height;
+  var pad={t:10,r:10,b:24,l:60};
+  var gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+
+  var vals=data.map(function(d){return d.value});
+  var mn=Math.min.apply(null,vals)*0.95;
+  var mx=Math.max.apply(null,vals)*1.05;
+  if(mn===mx){mn*=0.9;mx*=1.1}
+  var range=mx-mn||1;
+
+  // Grid lines
+  ctx.strokeStyle="#1a1a32";ctx.lineWidth=1;
+  for(var i=0;i<4;i++){
+    var gy=pad.t+gH*(i/3);
+    ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(W-pad.r,gy);ctx.stroke();
+    var gv=mx-range*(i/3);
+    ctx.fillStyle="#3a3a5a";ctx.font="9px sans-serif";ctx.textAlign="right";
+    ctx.fillText("$"+Math.round(gv).toLocaleString(),pad.l-6,gy+3);
+  }
+
+  // Area fill
+  ctx.beginPath();
+  data.forEach(function(d,i){
+    var x=pad.l+(i/(data.length-1))*gW;
+    var y=pad.t+gH*(1-(d.value-mn)/range);
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  });
+  ctx.lineTo(pad.l+gW,pad.t+gH);ctx.lineTo(pad.l,pad.t+gH);ctx.closePath();
+  var grad=ctx.createLinearGradient(0,pad.t,0,pad.t+gH);
+  var isUp=vals[vals.length-1]>=vals[0];
+  grad.addColorStop(0,isUp?"rgba(0,232,126,0.25)":"rgba(255,68,68,0.25)");
+  grad.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle=grad;ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  data.forEach(function(d,i){
+    var x=pad.l+(i/(data.length-1))*gW;
+    var y=pad.t+gH*(1-(d.value-mn)/range);
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle=isUp?"#00e87e":"#ff4444";ctx.lineWidth=2;ctx.stroke();
+
+  // Dots on first and last
+  [0,data.length-1].forEach(function(i){
+    var x=pad.l+(i/(data.length-1))*gW;
+    var y=pad.t+gH*(1-(data[i].value-mn)/range);
+    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);
+    ctx.fillStyle=isUp?"#00e87e":"#ff4444";ctx.fill();
+  });
+
+  // Date labels
+  ctx.fillStyle="#3a3a5a";ctx.font="9px sans-serif";ctx.textAlign="center";
+  [0,Math.floor(data.length/2),data.length-1].forEach(function(i){
+    if(i>=data.length)return;
+    var x=pad.l+(i/(data.length-1))*gW;
+    ctx.fillText(data[i].date.slice(5),x,H-4);
+  });
+}
+
+function renderEvoSection(wId){
+  var periods=[{k:"7d",l:"7D",d:7},{k:"30d",l:"30D",d:30},{k:"90d",l:"3M",d:90},{k:"1y",l:"1A",d:365}];
+  var selPeriod=window._evoPeriod||"30d";
+  var days=periods.find(function(p){return p.k===selPeriod}).d;
+  var data=wId?getWalletSnapshots(wId,days):getAllSnapshots(days);
+  var cid="evoCanvas_"+(wId||"all");
+
+  var html='<div class="evo-card">';
+  html+='<div class="evo-header">';
+  html+='<div class="evo-title">📈 Evolução Patrimonial</div>';
+  html+='<div class="evo-period">';
+  periods.forEach(function(p){
+    html+='<button class="evo-period-btn'+(p.k===selPeriod?" active":"")+'" onclick="window._evoPeriod=\''+p.k+'\';render()">'+p.l+'</button>';
+  });
+  html+='</div></div>';
+
+  if(data.length<2){
+    html+='<div class="evo-empty">Dados insuficientes. O gráfico aparece após 2+ dias de uso.</div>';
+  }else{
+    html+='<div class="evo-canvas-wrap"><canvas id="'+cid+'"></canvas></div>';
+    var first=data[0].value,last=data[data.length-1].value;
+    var change=last-first,changePct=first>0?(change/first)*100:0;
+    var maxVal=Math.max.apply(null,data.map(function(d){return d.value}));
+    var minVal=Math.min.apply(null,data.map(function(d){return d.value}));
+    html+='<div class="evo-stats">';
+    html+='<div class="evo-stat"><div class="evo-stat-label">Início</div><div class="evo-stat-value" style="color:#8a8aaa">'+fmt$(first)+'</div></div>';
+    html+='<div class="evo-stat"><div class="evo-stat-label">Atual</div><div class="evo-stat-value" style="color:#fff">'+fmt$(last)+'</div></div>';
+    html+='<div class="evo-stat"><div class="evo-stat-label">Variação</div><div class="evo-stat-value" style="color:'+(change>=0?'#00e87e':'#ff4444')+'">'+fmtP(changePct)+'</div></div>';
+    html+='<div class="evo-stat"><div class="evo-stat-label">Máxima</div><div class="evo-stat-value" style="color:#00e87e">'+fmt$(maxVal)+'</div></div>';
+    html+='<div class="evo-stat"><div class="evo-stat-label">Mínima</div><div class="evo-stat-value" style="color:#ff4444">'+fmt$(minVal)+'</div></div>';
+    html+='</div>';
+  }
+  html+='</div>';
+  return{html:html,canvasId:data.length>=2?cid:null,data:data};
+}
+
+/* ═══ REALIZAÇÕES ═══ */
+var REAL_TYPES=[
+  {v:"venda_spot",l:"Venda Spot",i:"💰",c:"#00e87e"},
+  {v:"aave_repay",l:"AAVE Repay",i:"🏦",c:"#7b61ff"},
+  {v:"aave_liquidacao",l:"AAVE Liquidação",i:"⚠️",c:"#ff4444"},
+  {v:"defi_exit",l:"DeFi Exit",i:"🔓",c:"#00aae4"},
+  {v:"swap",l:"Swap",i:"🔄",c:"#ffaa00"},
+  {v:"staking_reward",l:"Staking Reward",i:"⊛",c:"#00e87e"}
+];
+
+function getWalletRealizacoes(wId){
+  var w=wallets.find(function(x){return x.id===wId});
+  if(!w)return[];
+  if(!w.realizacoes)w.realizacoes=[];
+  return w.realizacoes;
+}
+
+function addRealizacao(wId,realData){
+  var w=wallets.find(function(x){return x.id===wId});if(!w)return;
+  if(!w.realizacoes)w.realizacoes=[];
+  realData.id="r_"+Date.now();
+  realData.data=realData.data||new Date().toISOString().slice(0,10);
+  // Calcular P&L
+  realData.valorVenda=(realData.quantidade||0)*(realData.precoVenda||0);
+  realData.valorCusto=(realData.quantidade||0)*(realData.precoMedio||0);
+  realData.pnl=realData.valorVenda-realData.valorCusto-(realData.taxas||0);
+  w.realizacoes.unshift(realData);
+  // Descontar da posição
+  if(realData.descontarPosicao!==false){
+    var pos=w.positions.find(function(p){return p.symbol===realData.moeda});
+    if(pos){
+      pos.quantity=Math.max(0,pos.quantity-(realData.quantidade||0));
+      if(pos.quantity===0){
+        w.positions=w.positions.filter(function(p){return p.symbol!==realData.moeda});
+      }
+    }
+  }
+  saveState();render();
+}
+
+function removeRealizacao(wId,rId){
+  var w=wallets.find(function(x){return x.id===wId});if(!w||!w.realizacoes)return;
+  w.realizacoes=w.realizacoes.filter(function(r){return r.id!==rId});
+  saveState();render();
+}
+
+function showRealizarModal(wId,symbol){
+  var w=wallets.find(function(x){return x.id===wId});if(!w)return;
+  var pos=w.positions.find(function(p){return p.symbol===symbol});
+  var curPrice=prices[symbol]?prices[symbol].price:(pos?pos.avgPrice:0);
+  var avgPrice=pos?pos.avgPrice:0;
+  var maxQty=pos?pos.quantity:0;
+
+  var typesHtml=REAL_TYPES.map(function(t){
+    return '<option value="'+t.v+'">'+t.i+' '+t.l+'</option>';
+  }).join('');
+
+  var html='<div class="modal-header"><h3>Realizar — '+symbol+'</h3><button class="close-btn" onclick="closeAllModals()">✕</button></div>';
+  html+='<div style="margin-bottom:12px;padding:12px;background:#0a0a14;border-radius:10px;display:flex;gap:16px;flex-wrap:wrap">';
+  html+='<div><span style="color:#5a5a7a;font-size:10px">POSIÇÃO ATUAL</span><div style="color:#fff;font-weight:700">'+maxQty.toLocaleString("en-US",{maximumFractionDigits:6})+' '+symbol+'</div></div>';
+  html+='<div><span style="color:#5a5a7a;font-size:10px">PREÇO MÉDIO</span><div style="color:#fff;font-weight:700">'+fmt$(avgPrice)+'</div></div>';
+  html+='<div><span style="color:#5a5a7a;font-size:10px">PREÇO ATUAL</span><div style="color:#00e87e;font-weight:700">'+fmt$(curPrice)+'</div></div>';
+  html+='</div>';
+
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">';
+  html+='<div><div class="label">Tipo</div><select id="rl_tipo" class="input" style="padding:10px 12px">'+typesHtml+'</select></div>';
+  html+='<div><div class="label">Data</div><input id="rl_data" class="input" type="date" value="'+new Date().toISOString().slice(0,10)+'"></div>';
+  html+='<div><div class="label">Quantidade</div><input id="rl_qty" class="input" type="number" step="any" placeholder="0.00" max="'+maxQty+'" oninput="calcRealPreview(\''+symbol+'\')"><div style="font-size:10px;color:#5a5a7a;margin-top:2px;cursor:pointer" onclick="document.getElementById(\'rl_qty\').value='+maxQty+';calcRealPreview(\''+symbol+'\')">Usar máx: '+maxQty.toLocaleString("en-US",{maximumFractionDigits:6})+'</div></div>';
+  html+='<div><div class="label">Preço de Venda (USD)</div><input id="rl_price" class="input" type="number" step="any" value="'+curPrice.toFixed(2)+'" oninput="calcRealPreview(\''+symbol+'\')"></div>';
+  html+='<div><div class="label">Taxas (USD)</div><input id="rl_taxas" class="input" type="number" step="any" value="0" oninput="calcRealPreview(\''+symbol+'\')"></div>';
+  html+='<div><div class="label">Observação</div><input id="rl_obs" class="input" placeholder="Opcional"></div>';
+  html+='</div>';
+
+  // Preview do P&L
+  html+='<div id="rlPreview" style="background:#0a0a14;border-radius:10px;padding:14px;margin-bottom:14px">';
+  html+='<div style="color:#3a3a5a;font-size:12px;text-align:center">Preencha quantidade e preço</div>';
+  html+='</div>';
+
+  html+='<div style="display:flex;gap:8px;align-items:center">';
+  html+='<label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#8a8aaa;cursor:pointer"><input type="checkbox" id="rl_desconto" checked> Descontar da posição</label>';
+  html+='</div>';
+  html+='<div style="display:flex;gap:8px;margin-top:14px">';
+  html+='<button class="btn btn-green" style="padding:12px 24px;font-size:14px;flex:1" onclick="doRealizacao(\''+wId+'\',\''+symbol+'\','+avgPrice+')">Confirmar Realização</button>';
+  html+='<button class="btn btn-gray" onclick="closeAllModals()">Cancelar</button>';
+  html+='</div>';
+  showModal(html);
+}
+
+function calcRealPreview(symbol){
+  var qty=parseFloat(document.getElementById("rl_qty").value)||0;
+  var price=parseFloat(document.getElementById("rl_price").value)||0;
+  var taxas=parseFloat(document.getElementById("rl_taxas").value)||0;
+  var pos=null;
+  wallets.forEach(function(w){w.positions.forEach(function(p){if(p.symbol===symbol&&!pos)pos=p})});
+  var avg=pos?pos.avgPrice:0;
+  var valorVenda=qty*price;
+  var valorCusto=qty*avg;
+  var pnl=valorVenda-valorCusto-taxas;
+  var pnlPct=valorCusto>0?(pnl/valorCusto)*100:0;
+
+  var h='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">';
+  h+='<div><span style="color:#5a5a7a;font-size:10px">VALOR VENDA</span><div style="color:#fff;font-weight:700">'+fmt$(valorVenda)+'</div></div>';
+  h+='<div><span style="color:#5a5a7a;font-size:10px">CUSTO BASE</span><div style="color:#8a8aaa;font-weight:700">'+fmt$(valorCusto)+'</div></div>';
+  h+='<div><span style="color:#5a5a7a;font-size:10px">TAXAS</span><div style="color:#ff8800;font-weight:700">'+fmt$(taxas)+'</div></div>';
+  h+='<div><span style="color:#5a5a7a;font-size:10px">LUCRO/PREJUÍZO</span><div style="font-size:18px;font-weight:800;color:'+(pnl>=0?'#00e87e':'#ff4444')+'">'+fmt$(pnl)+'</div><div style="font-size:11px;color:'+(pnl>=0?'#00e87e':'#ff4444')+'">'+fmtP(pnlPct)+'</div></div>';
+  h+='</div>';
+  document.getElementById("rlPreview").innerHTML=h;
+}
+
+function doRealizacao(wId,symbol,avgPrice){
+  var tipo=document.getElementById("rl_tipo").value;
+  var data=document.getElementById("rl_data").value;
+  var qty=parseFloat(document.getElementById("rl_qty").value)||0;
+  var price=parseFloat(document.getElementById("rl_price").value)||0;
+  var taxas=parseFloat(document.getElementById("rl_taxas").value)||0;
+  var obs=document.getElementById("rl_obs").value||"";
+  var desconto=document.getElementById("rl_desconto").checked;
+  if(qty<=0){alert("Informe a quantidade!");return}
+  if(price<=0){alert("Informe o preço de venda!");return}
+  addRealizacao(wId,{
+    tipo:tipo,moeda:symbol,quantidade:qty,
+    precoVenda:price,precoMedio:avgPrice,
+    taxas:taxas,obs:obs,data:data,
+    descontarPosicao:desconto
+  });
+  closeAllModals();
+}
+
+function renderRealizacoesSection(wId){
+  var reals=getWalletRealizacoes(wId);
+  var totalPnl=reals.reduce(function(s,r){return s+(r.pnl||0)},0);
+  var totalVendas=reals.reduce(function(s,r){return s+(r.valorVenda||0)},0);
+  var wins=reals.filter(function(r){return(r.pnl||0)>=0}).length;
+
+  var html='<div class="real-card">';
+  html+='<div class="real-header">';
+  html+='<div class="real-title">💰 Realizações <span style="font-size:11px;color:#5a5a7a;font-weight:400">'+reals.length+' operações</span></div>';
+  html+='</div>';
+
+  if(reals.length>0){
+    html+='<div class="real-summary">';
+    html+='<div class="real-summary-box"><div class="real-summary-label">P&L Realizado</div><div class="real-summary-val" style="color:'+(totalPnl>=0?'#00e87e':'#ff4444')+'">'+fmt$(totalPnl)+'</div></div>';
+    html+='<div class="real-summary-box"><div class="real-summary-label">Total Vendido</div><div class="real-summary-val" style="color:#fff">'+fmt$(totalVendas)+'</div></div>';
+    html+='<div class="real-summary-box"><div class="real-summary-label">Win Rate</div><div class="real-summary-val" style="color:'+(wins/reals.length>=0.5?'#00e87e':'#ff4444')+'">'+(reals.length>0?Math.round(wins/reals.length*100):0)+'%</div></div>';
+    html+='</div>';
+
+    reals.forEach(function(r){
+      var rt=REAL_TYPES.find(function(t){return t.v===r.tipo})||REAL_TYPES[0];
+      var pnl=r.pnl||0;
+      var pnlPct=r.valorCusto>0?(pnl/r.valorCusto)*100:0;
+      html+='<div class="real-row">';
+      html+='<div class="real-row-top">';
+      html+='<div class="real-row-left">';
+      html+='<div class="real-row-icon" style="background:'+rt.c+'15;color:'+rt.c+'">'+rt.i+'</div>';
+      html+='<div class="real-row-info"><div class="real-row-coin">'+r.moeda+' <span style="font-size:11px;color:#6a6a8a">×'+r.quantidade.toLocaleString("en-US",{maximumFractionDigits:6})+'</span></div>';
+      html+='<div class="real-row-type">'+rt.l+(r.obs?' — '+esc(r.obs):'')+'</div></div></div>';
+      html+='<div class="real-row-right"><div class="real-row-pnl" style="color:'+(pnl>=0?'#00e87e':'#ff4444')+'">'+(pnl>=0?'+':'')+fmt$(pnl)+'</div>';
+      html+='<div class="real-row-detail">'+fmtP(pnlPct)+'</div></div></div>';
+      html+='<div class="real-row-bottom">';
+      html+='<div class="real-row-meta">Venda: <span>'+fmt$(r.precoVenda)+'</span></div>';
+      html+='<div class="real-row-meta">Custo: <span>'+fmt$(r.precoMedio)+'</span></div>';
+      if(r.taxas>0)html+='<div class="real-row-meta">Taxas: <span>'+fmt$(r.taxas)+'</span></div>';
+      html+='<div class="real-row-meta">Data: <span>'+r.data+'</span></div>';
+      html+='<button class="orc-del" onclick="if(confirm(\'Remover esta realização?\'))removeRealizacao(\''+wId+'\',\''+r.id+'\')">&#128465;</button>';
+      html+='</div></div>';
+    });
+  }else{
+    html+='<div class="evo-empty">Nenhuma realização registrada. Clique em "Realizar" ao lado de um ativo.</div>';
+  }
+  html+='</div>';
+  return html;
 }
 
 /* ═══ BOTTOM NAV (MOBILE) ═══ */
