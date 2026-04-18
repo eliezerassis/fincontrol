@@ -481,6 +481,15 @@ const AC=["#f7931a","#627eea","#26a17b","#e6007a","#00aae4","#7b61ff","#ff6b6b",
 const WTYPES=[{v:"manual",l:"Manual",i:"✎",d:"Posições manuais"},{v:"exchange-api",l:"Exchange API",i:"⟐",d:"API Key"},{v:"onchain",l:"On-Chain",i:"⛓",d:"Endereço público"},{v:"defi",l:"DeFi",i:"⟁",d:"Lending/Borrowing"},{v:"self-custody",l:"Custódia",i:"🔐",d:"Hardware wallet"},{v:"staking",l:"Staking",i:"⊛",d:"Staking"}];
 const EXCHANGES=[{id:"binance",n:"Binance"},{id:"bybit",n:"Bybit"},{id:"mexc",n:"MEXC"},{id:"kucoin",n:"KuCoin"},{id:"okx",n:"OKX"},{id:"bitget",n:"Bitget"},{id:"gateio",n:"Gate.io"}];
 const CHAINS=[{id:"bitcoin",n:"Bitcoin",s:"BTC",ph:"bc1q..."},{id:"ethereum",n:"Ethereum",s:"ETH",ph:"0x..."},{id:"solana",n:"Solana",s:"SOL",ph:"Base58..."},{id:"bsc",n:"BNB Chain",s:"BNB",ph:"0x..."}];
+const STRATEGIES=[
+  {v:"spot",l:"Spot Trade",i:"📊",c:"#00e87e"},
+  {v:"futures_usdt",l:"Futuros USDT-M",i:"⚡",c:"#ff8800"},
+  {v:"futures_coin",l:"Futuros COIN-M",i:"🔥",c:"#ff4444"},
+  {v:"holding",l:"Holding",i:"💎",c:"#7b61ff"},
+  {v:"defi_lending",l:"DeFi/Lending",i:"🏦",c:"#00aae4"},
+  {v:"staking",l:"Staking",i:"⊛",c:"#ffcc00"},
+  {v:"outro",l:"Outro",i:"📁",c:"#6a6a8a"}
+];
 const COIN_LIST=Object.keys(CG).sort();
 
 const fmt$=(v,d=2)=>v==null?"--":"$"+Number(v).toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d});
@@ -1065,8 +1074,12 @@ function renderWallet(wId){
   html+='</div>';
 
   // Wallet header
+  var strat=w.strategy?STRATEGIES.find(function(s){return s.v===w.strategy}):null;
   html+='<div class="flex" style="justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">';
-  html+='<div><h2 style="color:#fff;font-size:17px">'+ti.i+' '+esc(w.name)+'</h2><div style="color:#6a6a8a;font-size:11px">'+ti.l+' · '+w.positions.length+' ativo'+(w.positions.length!==1?'s':'')+'</div>';
+  html+='<div><h2 style="color:#fff;font-size:17px">'+ti.i+' '+esc(w.name)+'</h2>';
+  html+='<div style="color:#6a6a8a;font-size:11px;display:flex;align-items:center;gap:6px">'+ti.l+' · '+w.positions.length+' ativo'+(w.positions.length!==1?'s':'');
+  if(strat)html+=' · <span style="background:'+strat.c+'18;color:'+strat.c+';padding:1px 8px;border-radius:6px;font-size:10px;font-weight:600">'+strat.i+' '+strat.l+'</span>';
+  html+='</div>';
   if(w.syncStatus)html+='<div style="font-size:11px;color:'+(w.syncStatus.ok?'#00e87e':'#ff6666')+';margin-top:4px">'+(w.syncStatus.ok?'●':'○')+' '+esc(w.syncStatus.msg||'')+'</div>';
   html+='</div><div class="flex gap-8">';
   if(w.connection)html+='<button class="btn btn-blue btn-sm" onclick="syncWallet(\''+w.id+'\')">⚡ Sync</button>';
@@ -1074,12 +1087,50 @@ function renderWallet(wId){
   html+='<button class="btn btn-purple btn-sm" onclick="openEditWallet(\''+w.id+'\')">✎ Editar</button>';
   html+='<button class="btn btn-red btn-sm" onclick="deleteWallet(\''+w.id+'\')">Excluir</button></div></div>';
 
-  // Wallet KPIs
-  html+='<div class="kpis">';
-  html+='<div class="kpi"><div class="kpi-label">Valor</div><div class="kpi-value">'+fmt$(ws.total)+'</div></div>';
-  html+='<div class="kpi"><div class="kpi-label">Custo</div><div class="kpi-value">'+fmt$(ws.cost)+'</div></div>';
-  html+='<div class="kpi"><div class="kpi-label">P&L</div><div class="kpi-value">'+fmt$(ws.pnl)+'</div><div class="kpi-sub" style="color:'+(ws.pnl>=0?'#00e87e':'#ff4444')+'">'+fmtP(ws.pnlPct)+'</div></div>';
-  html+='<div class="kpi"><div class="kpi-label">% Patrimônio</div><div class="kpi-value">'+(totalVal>0?(ws.total/totalVal*100).toFixed(1)+'%':'0%')+'</div></div>';
+  // P&L Dashboard — Realizado vs Não Realizado
+  var reals=getWalletRealizacoes(wId);
+  var pnlRealizado=reals.reduce(function(s,r){return s+(r.pnl||0)},0);
+  var pnlNaoRealizado=ws.pnl;
+  var pnlTotal=pnlRealizado+pnlNaoRealizado;
+  var totalVendido=reals.reduce(function(s,r){return s+(r.valorVenda||0)},0);
+  var wins=reals.filter(function(r){return(r.pnl||0)>=0}).length;
+  var losses=reals.length-wins;
+  var melhorTrade=reals.length>0?reals.reduce(function(a,b){return(a.pnl||0)>(b.pnl||0)?a:b}):null;
+  var piorTrade=reals.length>0?reals.reduce(function(a,b){return(a.pnl||0)<(b.pnl||0)?a:b}):null;
+
+  html+='<div style="background:linear-gradient(135deg,#0f0f22,#141430);border:1px solid #1e1e38;border-radius:14px;padding:20px;margin-bottom:14px">';
+  html+='<div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:14px;display:flex;align-items:center;gap:8px">📊 Painel de P&L';
+  if(strat)html+=' <span style="color:'+strat.c+';font-size:10px;font-weight:400">'+strat.l+'</span>';
+  html+='</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px">';
+  // P&L Total
+  html+='<div style="background:#0a0a14;border-radius:10px;padding:14px;text-align:center;border-left:3px solid '+(pnlTotal>=0?'#00e87e':'#ff4444')+'">';
+  html+='<div style="font-size:9px;color:#5a5a7a;text-transform:uppercase;letter-spacing:.5px">P&L Total</div>';
+  html+='<div style="font-size:20px;font-weight:800;color:'+(pnlTotal>=0?'#00e87e':'#ff4444')+';margin-top:4px">'+(pnlTotal>=0?'+':'')+fmt$(pnlTotal)+'</div></div>';
+  // Não Realizado
+  html+='<div style="background:#0a0a14;border-radius:10px;padding:14px;text-align:center;border-left:3px solid #7b61ff">';
+  html+='<div style="font-size:9px;color:#5a5a7a;text-transform:uppercase;letter-spacing:.5px">Não Realizado</div>';
+  html+='<div style="font-size:16px;font-weight:700;color:'+(pnlNaoRealizado>=0?'#00e87e':'#ff4444')+';margin-top:4px">'+fmt$(pnlNaoRealizado)+'</div>';
+  html+='<div style="font-size:10px;color:#5a5a7a">em '+w.positions.length+' posições</div></div>';
+  // Realizado
+  html+='<div style="background:#0a0a14;border-radius:10px;padding:14px;text-align:center;border-left:3px solid #ff8800">';
+  html+='<div style="font-size:9px;color:#5a5a7a;text-transform:uppercase;letter-spacing:.5px">Realizado</div>';
+  html+='<div style="font-size:16px;font-weight:700;color:'+(pnlRealizado>=0?'#00e87e':'#ff4444')+';margin-top:4px">'+fmt$(pnlRealizado)+'</div>';
+  html+='<div style="font-size:10px;color:#5a5a7a">'+reals.length+' operações</div></div>';
+  // Win/Loss
+  html+='<div style="background:#0a0a14;border-radius:10px;padding:14px;text-align:center;border-left:3px solid #ffcc00">';
+  html+='<div style="font-size:9px;color:#5a5a7a;text-transform:uppercase;letter-spacing:.5px">Win / Loss</div>';
+  html+='<div style="font-size:16px;font-weight:700;color:#fff;margin-top:4px"><span style="color:#00e87e">'+wins+'W</span> / <span style="color:#ff4444">'+losses+'L</span></div>';
+  html+='<div style="font-size:10px;color:#5a5a7a">'+(reals.length>0?Math.round(wins/reals.length*100)+'% win rate':'--')+'</div></div>';
+  html+='</div>';
+  // Melhor / Pior trade
+  if(reals.length>0){
+    html+='<div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap">';
+    if(melhorTrade)html+='<div style="font-size:11px;color:#00e87e">🏆 Melhor: <b>'+melhorTrade.moeda+'</b> '+fmt$(melhorTrade.pnl)+'</div>';
+    if(piorTrade&&piorTrade.pnl<0)html+='<div style="font-size:11px;color:#ff4444">📉 Pior: <b>'+piorTrade.moeda+'</b> '+fmt$(piorTrade.pnl)+'</div>';
+    html+='<div style="font-size:11px;color:#8a8aaa">💵 Total vendido: '+fmt$(totalVendido)+'</div>';
+    html+='</div>';
+  }
   html+='</div>';
 
   // Gráfico de evolução
@@ -1231,7 +1282,7 @@ function saveEditWallet(){
 }
 
 /* ═══ NEW WALLET ═══ */
-var _nwType="manual",_nwChain="bitcoin",_nwExchange="binance";
+var _nwType="manual",_nwChain="bitcoin",_nwExchange="binance",_nwStrategy="spot";
 
 function showNewWalletModal(){
   var html='<div class="modal-header"><h3>Nova Carteira</h3><button class="close-btn" onclick="closeAllModals()">✕</button></div>';
@@ -1241,14 +1292,32 @@ function showNewWalletModal(){
   });
   html+='</div>';
   html+='<div style="margin-bottom:14px"><div class="label">Nome</div><input id="nwName" class="input" style="max-width:300px" placeholder="Ex: Binance, Ledger..."></div>';
+  html+='<div id="nwStrategyField"></div>';
   html+='<div id="nwExtraFields"></div>';
   html+='<div class="flex gap-8"><button class="btn btn-green" style="padding:12px 24px;font-size:14px" onclick="createWallet()">Criar Carteira</button><button class="btn btn-gray" onclick="closeAllModals()">Cancelar</button></div>';
-  showModal(html);_nwType="manual";
+  showModal(html);_nwType="manual";_nwStrategy="spot";
+  renderStrategySelector();
+}
+
+function renderStrategySelector(){
+  var sf=document.getElementById("nwStrategyField");
+  if(!sf)return;
+  if(_nwType==="manual"||_nwType==="exchange-api"){
+    var h='<div style="margin-bottom:14px"><div class="label">Estratégia</div><div class="flex gap-8 wrap">';
+    STRATEGIES.forEach(function(s){
+      h+='<button class="chain-btn'+(_nwStrategy===s.v?" active":"")+'" style="'+ (_nwStrategy===s.v?'border-color:'+s.c+';color:'+s.c:'')+'" onclick="_nwStrategy=\''+s.v+'\';renderStrategySelector()">'+s.i+' '+s.l+'</button>';
+    });
+    h+='</div></div>';
+    sf.innerHTML=h;
+  }else{
+    sf.innerHTML="";
+  }
 }
 
 function selectNewType(type){
   _nwType=type;
   document.querySelectorAll("#typePills .type-pill").forEach(function(el){el.classList.toggle("active",el.dataset.type===type)});
+  renderStrategySelector();
   var extra=document.getElementById("nwExtraFields");
   if(type==="onchain"){
     var h='<div class="label">Blockchain</div><div class="flex gap-8 wrap" style="margin-bottom:14px">';
@@ -1272,7 +1341,8 @@ function selectNewType(type){
 function createWallet(){
   var name=(document.getElementById("nwName").value||"").trim()||"Carteira "+(wallets.length+1);
   var type=_nwType;
-  var w={id:"w"+Date.now(),name:name,type:type,positions:[],connection:null,syncStatus:null,defiPositions:[]};
+  var strategy=(type==="manual"||type==="exchange-api")?_nwStrategy:null;
+  var w={id:"w"+Date.now(),name:name,type:type,strategy:strategy,positions:[],connection:null,syncStatus:null,defiPositions:[],realizacoes:[]};
   if(type==="onchain"){
     var addr=(document.getElementById("nwAddr")?.value||"").trim();
     w.connection={chain:_nwChain,address:addr};
