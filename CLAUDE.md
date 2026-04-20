@@ -1,11 +1,14 @@
 # FinControl — Contexto do Projeto
 
 ## O que é
-App PWA de controle financeiro pessoal, feito em **vanilla HTML/CSS/JS** (arquivo único `portfolio-tracker.html`). Sem React, sem frameworks, sem CDN obrigatório. Tudo roda standalone no navegador.
+App PWA focado **exclusivamente em investimentos**, feito em **vanilla HTML/CSS/JS** (arquivo único `portfolio-tracker.html`). Sem React, sem frameworks, sem CDN obrigatório. Tudo roda standalone no navegador.
+
+**Escopo:** portfolio crypto, aportes, reserva de emergência. Metas de patrimônio.
+**Fora de escopo:** orçamento mensal, contas fixas, cartões de crédito, despesas variáveis — esses ficam no app Controle Paessoa.
 
 ## Stack
 - HTML5 + CSS3 + JavaScript ES5 (vanilla, sem transpiler)
-- localStorage para persistência (chaves separadas por módulo)
+- localStorage + Supabase (auth + sync multi-device via tabela `user_data`)
 - PWA: manifest.json + sw.js + ícones em /icons/
 - APIs externas: CoinGecko (preços crypto), AwesomeAPI (cotação USD)
 
@@ -18,79 +21,70 @@ icons/                  ← ícones PNG 72-512px + SVG
 CLAUDE.md               ← este arquivo
 ```
 
-## Módulos do App (tabs de navegação)
+## Módulos do App
 
-### 1. Portfolio Crypto
-- Múltiplas carteiras com moedas (BTC, ETH, SOL, etc.)
+### 1. Dashboard (Home)
+- Hero com patrimônio total + sparkline 30d + delta 7d
+- Pill flutuante de ações (estilo Apple Control Center)
+- Alertas contextuais (alvos atingidos, reserva pendente, últimos aportes)
+- 3 stats: Aportado, Líquido pós-emergencial, Ativos/Carteiras
+- Previews: Top Ativos, Emergenciais, Aportes recentes
+
+### 2. Portfolio Crypto (Carteiras)
+- Múltiplas carteiras (BTC, ETH, SOL, etc.)
 - Preços ao vivo via CoinGecko API
 - Cotação USD/BRL via AwesomeAPI
-- Cálculo de P&L, alocação por moeda
+- P&L por ativo, alocação percentual
+- Realizações (sell) com cálculo de P&L realizado
 
-### 2. Reserva de Emergência
-- Blocos de reserva com meta e valor atual
-- Barra de progresso
+### 3. Reserva Emergencial
+- Blocos de reserva com itens
+- Conversão R$ ↔ $ bidirecional automática
 
-### 3. Plano de Aportes
-- Blocos de aporte mensal com distribuição por moeda
-
-### 4. Orçamento Mensal (módulo mais complexo)
-- **Navegação por mês/ano** (orcMes, orcAno)
-- **Receitas** por categoria: Trabalho, Investimentos, Outros (com obs)
-- **Contas Fixas** com toggle "pago" (só pagas somam no gasto real)
-- **Despesas Variáveis** com categorias (alimentação, transporte, lazer, etc.) + toggle pago
-- **Cartões de Crédito** — cada cartão tem gastos individuais, fatura com valor e status (aberta/fechada). Só fatura fechada soma no gasto total
-- **Extras** — receitas ou despesas extraordinárias do mês
-- **Parcelamentos** — global (não por mês), calcula parcela ativa por mês automaticamente
-- **Meta de Economia** — alvo mensal com barra de progresso
-- **Metas de Longo Prazo** — nome, valor alvo, acumulado, prazo
-- **Gráfico Histórico** — barras de receita vs gasto dos últimos 6 meses
-- **Resumo Anual** — totais do ano, melhor/pior mês, categoria campeã
-- **Sistema de colapso** — todos os blocos começam minimizados, clicando no header expande (orcSectionOpen)
-- **KPIs** — Receita, Gasto Real, Saldo, Previsto (sempre visíveis)
-- **Barra de Saúde** — composição percentual do orçamento
-- **Alertas** — aviso automático de gastos altos, contas pendentes, faturas abertas
+### 4. Plano de Aportes
+- Blocos mensais com itens (data, moeda, qtd, PM, via)
+- Auto-cálculo em cascata: edita qualquer campo, os outros se ajustam (qtd × PM = Total R$, ÷ cotação = Total $)
 
 ## Chaves de Storage
 ```javascript
-STORAGE_KEY = "crypto_port_v3"     // portfolio crypto
-EMERG_KEY = "crypto_emerg_v1"      // reserva emergência
-APORTE_KEY = "crypto_aporte_v1"    // plano aportes
-ORC_KEY = "fincontrol_orc_v1"      // orçamento (objeto com chaves "M_YYYY")
-PARC_KEY = "fincontrol_parc_v1"    // parcelamentos (array global)
-META_LP_KEY = "fincontrol_metalp_v1" // metas longo prazo (array global)
+STORAGE_KEY = "crypto_port_v3"        // wallets
+EMERG_KEY = "crypto_emerg_v1"         // reserva emergência
+APORTE_KEY = "crypto_aporte_v1"       // aportes
+META_LP_KEY = "fincontrol_metalp_v1"  // metas longo prazo
+SNAP_KEY = "fincontrol_snapshots_v1"  // snapshots históricos
 ```
+
+Todas sincronizam via Supabase (tabela `user_data`, RLS por `user_id`).
+
+## Sync (Supabase)
+- Debounce de 2s após edição local → upload
+- `visibilitychange` / `pagehide` disparam flush imediato
+- Proteção contra overwrite: se local tem edições não sincronizadas (mtime > syncedAt), pull não sobrescreve
+- Auto-sync periódico: cada 120s enquanto logado
 
 ## Padrões de Código
 - Funções CRUD: `addX()`, `removeX(id)`, `updateX(id, field, val)`
-- Cada CRUD chama `saveOrc(); render();` no final
-- `migrateOrcEntry(entry)` — converte dados antigos para formato novo
-- `getOrcMes(m, a)` — retorna ou cria dados do mês
-- `orcKey(m, a)` — gera chave "M_YYYY"
-- `fmtBRL(v)` — formata número como R$ X.XXX,XX
+- Cada CRUD chama `saveX(); render();` no final
+- `fmtBRL(v)` — formata R$ X.XXX,XX
+- `fmt$(v)` — formata $ X,XXX.XX
 - `esc(s)` — escapa HTML
-- `render()` — decide qual view renderizar baseado na tab ativa
-- `orcToggleHtml(id, checked, fn)` — gera HTML do toggle switch
+- `render()` — despacha para view ativa (dashboard, consolidated, wallet, emergencial, aporte)
 
 ## Design
-- Tema escuro (#0a0a1a base, #0f0f22 cards, #0a0a18 rows)
-- Cor primária: #00e87e (verde)
-- Cores de seção: #ff8800 fixas, #6c5ce7 variáveis, #e68a00 cartões, #aa66aa parcelas, #9944ff extras, #ffcc00 metas
-- Layout 2 colunas (orc-2col) com cards colapsáveis
-- CSS classes: orc-card, orc-row, orc-kpi, orc-toggle, orc-pill, orc-inp-val, etc.
-- Responsivo: colapsa para 1 coluna em <768px
+- Tema escuro (#0a0a14 base, #12122a cards)
+- Cor primária: #7b61ff (roxo), #00e87e (verde)
+- Tabelas responsivas com padrão `.mobi-stack` (viram cards empilhados em ≤768px)
+- Pill flutuante glass com `backdrop-filter: blur`
 
 ## PWA
-- Service Worker com estratégia network-first
+- Service Worker network-first
 - Funciona offline
-- Botão de instalar (flutuante + menu)
-- Notificações de contas pendentes (a cada 6h)
-- Ícone profissional FC com barras de gráfico
+- Botão de instalar (menu)
+- Ícone profissional FC
 
 ## Regras Importantes
 - NUNCA usar React, Babel, ou frameworks
 - NUNCA adicionar dependências CDN obrigatórias
 - Manter tudo em UM arquivo HTML (exceto sw.js e manifest.json)
-- Toggle "pago" controla se despesa entra no gasto real
-- Fatura de cartão só conta quando "fechada"
-- Parcelas são globais, cálculo por mês é dinâmico
-- Export/Import inclui TODOS os dados (wallets, emergência, aportes, orçamento, parcelas, metas)
+- NUNCA adicionar funcionalidades de orçamento mensal, contas fixas, cartões de crédito ou despesas — esses ficam no Controle Paessoa
+- Export/Import inclui TODOS os dados de investimento (wallets, emergência, aportes, metas, snapshots)

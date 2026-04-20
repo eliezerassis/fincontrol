@@ -14,7 +14,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="msapplication-TileColor" content="#0a0a1a">
 <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
-<meta name="description" content="Controle financeiro pessoal: portfolio crypto, orcamento, despesas, cartoes e metas.">
+<meta name="description" content="FinControl — gestão de investimentos: portfolio crypto, aportes, reserva de emergência.">
 <!-- Apple Touch Icons -->
 <link rel="apple-touch-icon" href="icons/icon-152x152.png">
 <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png">
@@ -254,93 +254,6 @@ tr:hover td{background:#15152a}
 .status-dot.ok{background:#00e87e;box-shadow:0 0 6px #00e87e66}
 .status-dot.warn{background:#ffaa00;box-shadow:0 0 6px #ffaa0066}
 .status-dot.off{background:#ff4444;box-shadow:0 0 6px #ff444466}
-
-/* === ORCAMENTO PRO v2 === */
-.orc-wrap{max-width:1100px;margin:0 auto;padding:0 8px}
-.orc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:16px}
-.orc-month-nav{display:inline-flex;align-items:center;gap:0;background:#12122a;border-radius:12px;border:1px solid #1e1e38;overflow:hidden}
-.orc-month-btn{background:transparent;border:none;color:#6a6a8a;width:38px;height:38px;cursor:pointer;font-size:14px;transition:all .2s}
-.orc-month-btn:hover{background:#1e1e38;color:#fff}
-.orc-month-label{min-width:120px;text-align:center;font-size:15px;font-weight:700;color:#fff;padding:0 8px}
-.orc-card{background:#0f0f22;border-radius:14px;padding:20px;border:1px solid #1a1a32;margin-bottom:14px;transition:border-color .25s}
-.orc-card:hover{border-color:#2a2a4a}
-.orc-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.orc-card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;color:#c0c0d8}
-.orc-card-count{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:4px}
-.orc-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-.orc-btn-add{padding:5px 14px;border-radius:8px;cursor:pointer;font-size:11px;font-weight:600;border:1px solid;background:transparent;transition:all .2s;letter-spacing:.3px}
-.orc-btn-add:hover{filter:brightness(1.3)}
-.orc-row{background:#0a0a18;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;border:1px solid transparent;transition:all .2s}
-.orc-row:hover{border-color:#22223a;background:#0d0d1e}
-.orc-row-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.orc-row-body{flex:1;min-width:0}
-.orc-row-name{font-size:13px;font-weight:600;color:#e0e0f0}
-.orc-row-meta{font-size:11px;color:#5a5a7a;margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.orc-row-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.orc-val{font-size:14px;font-weight:700;white-space:nowrap}
-.orc-pill{padding:2px 7px;border-radius:8px;font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
-.orc-toggle{position:relative;width:36px;height:20px;cursor:pointer;display:inline-block;vertical-align:middle}
-.orc-toggle input{opacity:0;width:0;height:0;position:absolute}
-.orc-toggle .slider{position:absolute;inset:0;background:#22223a;border-radius:20px;transition:.25s}
-.orc-toggle .slider:before{content:"";position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#4a4a6a;border-radius:50%;transition:.25s}
-.orc-toggle input:checked+.slider{background:#00e87e33}
-.orc-toggle input:checked+.slider:before{transform:translateX(16px);background:#00e87e}
-.orc-inp{background:transparent;border:1px solid transparent;color:#fff;padding:4px 8px;border-radius:6px;font-size:13px;transition:all .2s;font-family:inherit}
-.orc-inp:focus{outline:none;border-color:#2a2a5a;background:#08081a}
-.orc-inp-val{background:#08081a;border:1px solid #1a1a32;color:#fff;padding:6px 10px;border-radius:8px;font-size:13px;text-align:right;font-weight:700;width:100px;font-family:inherit;transition:border-color .2s}
-.orc-inp-val:focus{outline:none;border-color:#3a3a6a}
-.orc-del{background:transparent;border:none;color:#ff4444;cursor:pointer;font-size:15px;opacity:.3;transition:opacity .2s;padding:2px 6px;line-height:1}
-.orc-del:hover{opacity:1}
-.orc-alert{border-radius:10px;padding:8px 14px;display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;font-weight:500}
-.orc-dash{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.orc-dash-hero{background:linear-gradient(135deg,#0f0f22 0%,#141430 100%);border-radius:14px;padding:24px;border:1px solid #1e1e38;grid-column:1/3;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.orc-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
-.orc-kpi{background:#0f0f22;border-radius:12px;padding:14px 16px;border:1px solid #1a1a32;position:relative;overflow:hidden}
-.orc-kpi::after{content:"";position:absolute;top:0;left:0;right:0;height:2px}
-.orc-kpi-label{color:#5a5a7a;font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;font-weight:600}
-.orc-kpi-value{font-size:20px;font-weight:800;line-height:1.1}
-.orc-kpi-sub{color:#4a4a6a;font-size:10px;margin-top:4px}
-.orc-health{background:#0f0f22;border-radius:12px;padding:14px 18px;border:1px solid #1a1a32;margin-bottom:14px}
-.orc-health-bar{display:flex;height:6px;border-radius:3px;overflow:hidden;background:#08081a}
-.orc-health-legend{display:flex;gap:14px;margin-top:6px;flex-wrap:wrap}
-.orc-health-dot{font-size:9px;font-weight:600;display:flex;align-items:center;gap:3px}
-.orc-health-dot::before{content:"";width:6px;height:6px;border-radius:50%;display:inline-block}
-.orc-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.orc-empty{color:#2a2a44;font-size:12px;text-align:center;padding:28px 0;font-style:italic}
-.orc-obs-inp{background:transparent;border:none;color:#4a4a6a;font-size:10px;font-style:italic;width:100%;padding:0;margin-top:2px;font-family:inherit}
-.orc-obs-inp:focus{outline:none;color:#6a6a8a}
-.orc-progress{height:6px;background:#08081a;border-radius:3px;overflow:hidden;margin-top:8px}
-.orc-progress-fill{height:100%;border-radius:3px;transition:width .3s}
-.orc-chart{display:flex;align-items:flex-end;gap:8px;height:120px;padding:0 4px}
-.orc-chart-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
-.orc-chart-col{display:flex;align-items:flex-end;gap:3px;height:100px}
-.orc-chart-stick{width:12px;border-radius:3px 3px 0 0;min-height:2px;transition:height .3s}
-.orc-chart-label{color:#4a4a6a;font-size:9px;font-weight:700;letter-spacing:.3px}
-.orc-chart-val{font-size:9px;font-weight:700}
-.orc-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
-.orc-summary-cell{background:#08081a;border-radius:10px;padding:12px;text-align:center}
-.orc-summary-cell-label{color:#4a4a6a;font-size:9px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:600}
-.orc-summary-cell-val{font-size:16px;font-weight:700}
-.orc-cat-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.orc-cat-icon{font-size:14px;width:22px;text-align:center}
-.orc-cat-name{color:#6a6a8a;font-size:11px;width:70px;flex-shrink:0}
-.orc-cat-bar{flex:1;height:5px;background:#08081a;border-radius:3px;overflow:hidden}
-.orc-cat-fill{height:100%;border-radius:3px}
-.orc-cat-val{font-size:11px;font-weight:700;width:80px;text-align:right}
-.orc-card-head{cursor:pointer;user-select:none}
-.orc-card-head:hover .orc-chev{color:#8a8aaa}
-.orc-chev{color:#3a3a5a;font-size:11px;transition:transform .25s;margin-left:auto;padding-left:8px;flex-shrink:0}
-.orc-chev.open{transform:rotate(180deg)}
-.orc-card-body{overflow:hidden}
-.orc-card-body.collapsed{max-height:0!important;opacity:0;overflow:hidden;padding:0!important;margin:0!important}
-@media(max-width:768px){
-.orc-dash{grid-template-columns:1fr}
-.orc-dash-hero{grid-column:1}
-.orc-kpi-row{grid-template-columns:1fr 1fr}
-.orc-2col{grid-template-columns:1fr}
-.orc-row{flex-wrap:wrap}
-.orc-row-actions{width:100%;justify-content:flex-end;padding-top:4px;border-top:1px solid #12122a}
-}
 
 /* ═══ AUTH LOGIN SCREEN ═══ */
 .auth-screen{position:fixed;inset:0;background:linear-gradient(160deg,#0a0a14 0%,#0d0d24 40%,#12102a 100%);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column}
@@ -655,42 +568,10 @@ function loadAporte(){
 function saveAporte(){try{localStorage.setItem(APORTE_KEY,JSON.stringify(aporteBlocos));}catch(e){} debouncedSync("aportes")}
 aporteBlocos=loadAporte();
 
-/* ═══ ORÇAMENTO STATE ═══ */
-const ORC_KEY="fincontrol_orc_v1";
-let orcData={};
-let orcMes,orcAno;
-(function(){var n=new Date();orcMes=n.getMonth()+1;orcAno=n.getFullYear()})();
-
-function orcKey(m,a){return a+"-"+String(m).padStart(2,"0")}
-function loadOrc(){try{var d=localStorage.getItem(ORC_KEY);if(d)return JSON.parse(d);}catch(e){}return{}}
-function saveOrc(){try{localStorage.setItem(ORC_KEY,JSON.stringify(orcData));}catch(e){} debouncedSync("orcamento")}
-orcData=loadOrc();
-
-function migrateOrcEntry(entry){
-  if(!entry)return entry;
-  if(!entry.receitas){
-    var oldRec=entry.receita||0;
-    entry.receitas={trabalho:oldRec>0?[{id:Date.now(),nome:"Salario",valor:oldRec,obs:""}]:[],investimentos:[],outros:[]};
-    delete entry.receita;
-  }
-  if(!entry.receitas.trabalho)entry.receitas.trabalho=[];
-  if(!entry.receitas.investimentos)entry.receitas.investimentos=[];
-  if(!entry.receitas.outros)entry.receitas.outros=[];
-  if(entry.metaEconomia===undefined)entry.metaEconomia=entry.metaVariavel||0;
-  if(!entry.extras)entry.extras=[];
-  if(!entry.variaveis)entry.variaveis=[];
-  if(!entry.fixas)entry.fixas=[];
-  if(!entry.cartoes)entry.cartoes=[];
-  return entry;
-}
-
-// Parcelas e Metas LP = storage global (não por mês)
-var PARC_KEY="fincontrol_parc_v1";
+/* ═══ METAS DE LONGO PRAZO (patrimônio) ═══ */
 var META_LP_KEY="fincontrol_metalp_v1";
-var parcelas=[];var metasLP=[];
-try{var _p=localStorage.getItem(PARC_KEY);if(_p)parcelas=JSON.parse(_p);}catch(e){}
+var metasLP=[];
 try{var _ml=localStorage.getItem(META_LP_KEY);if(_ml)metasLP=JSON.parse(_ml);}catch(e){}
-function saveParc(){try{localStorage.setItem(PARC_KEY,JSON.stringify(parcelas));}catch(e){} debouncedSync("parcelas")}
 function saveMetaLP(){try{localStorage.setItem(META_LP_KEY,JSON.stringify(metasLP));}catch(e){} debouncedSync("metas_lp")}
 
 // Rastreio de mtime/synced por chave, para evitar que o pull apague alterações locais não sincronizadas
@@ -709,19 +590,6 @@ function debouncedSync(key){
 function flushSync(){
   if(_debounceSyncTimer){clearTimeout(_debounceSyncTimer);_debounceSyncTimer=null}
   return syncToCloud();
-}
-function getOrcMes(m,a){
-  var k=orcKey(m,a);
-  if(orcData[k]){migrateOrcEntry(orcData[k]);return orcData[k];}
-  var pm=m===1?12:m-1,pa=m===1?a-1:a;
-  var prev=orcData[orcKey(pm,pa)];
-  if(prev)migrateOrcEntry(prev);
-  var fixas=[];
-  try{if(prev&&prev.fixas)fixas=prev.fixas.map(function(f){return{id:Date.now()+Math.floor(Math.random()*9999),nome:f.nome||"",valor:f.valor||0,obs:f.obs||"",pago:false}});}catch(e){}
-  var recTrab=[];
-  try{if(prev&&prev.receitas&&prev.receitas.trabalho)recTrab=prev.receitas.trabalho.map(function(r){return{id:Date.now()+Math.floor(Math.random()*9999),nome:r.nome||"",valor:r.valor||0,obs:""}});}catch(e){}
-  orcData[k]={receitas:{trabalho:recTrab,investimentos:[],outros:[]},metaEconomia:prev?prev.metaEconomia||0:0,fixas:fixas,variaveis:[],extras:[]};
-  return orcData[k];
 }
 
 /* ═══ DROPDOWN ═══ */
@@ -896,7 +764,6 @@ function renderNav(){
   var html='';
   html+='<div class="nav-tab '+(view==="dashboard"?"active":"")+'" onclick="goTo(\'dashboard\')">📊 Dashboard</div>';
   html+='<div class="nav-tab '+(view==="consolidated"||view==="wallet"?"active":"")+'" onclick="goTo(\'consolidated\')">💼 Carteiras <span class="tab-badge">'+wallets.length+'</span></div>';
-  html+='<div class="nav-tab '+(view==="orcamento"?"active":"")+'" onclick="goTo(\'orcamento\')" style="'+(view==="orcamento"?"color:#00aae4;border-bottom-color:#00aae4":"")+'">📋 Orçamento</div>';
   html+='<div class="nav-tab nav-tab-emerg '+(view==="emergencial"?"active":"")+'" onclick="goTo(\'emergencial\')">🚨 Emergenciais <span class="tab-badge">'+emergBlocos.reduce(function(s,b){return s+b.itens.length},0)+'</span></div>';
   html+='<div class="nav-tab nav-tab-aporte '+(view==="aporte"?"active":"")+'" onclick="goTo(\'aporte\')">💰 Aportes <span class="tab-badge">'+aporteBlocos.reduce(function(s,b){return s+b.itens.length},0)+'</span></div>';
   document.getElementById("navTabs").innerHTML=html;
@@ -929,8 +796,6 @@ function render(){
     renderEmergencial();
   }else if(view==="aporte"){
     renderAporte();
-  }else if(view==="orcamento"){
-    renderOrcamento();
   }
 }
 
@@ -970,15 +835,14 @@ function drawDashSparkline(id,points,color){
 function buildDashAlerts(cons){
   var out=[];
   try{
-    var o=getOrcMes(orcMes,orcAno);
-    if(o&&o.fixas){
-      var pend=o.fixas.filter(function(f){return !f.pago&&(f.valor||0)>0});
-      if(pend.length>0)out.push({i:"⚠",t:pend.length+" conta"+(pend.length>1?"s":"")+" fixa"+(pend.length>1?"s":"")+" pendente"+(pend.length>1?"s":"")+" em "+MESES_NOME[orcMes],c:"#ff8800",go:"goTo('orcamento')"});
-    }
-  }catch(e){}
-  try{
     var alvo=cons.filter(function(p){return p.targetPrice&&p.targetProgress!=null&&p.targetProgress>=100});
     if(alvo.length>0)out.push({i:"🎯",t:alvo.slice(0,3).map(function(p){return p.symbol}).join(", ")+" atingi"+(alvo.length>1?"ram":"u")+" alvo",c:"#00e87e",go:"goTo('consolidated')"});
+  }catch(e){}
+  try{
+    var emergTotal=0;emergBlocos.forEach(function(b){b.itens.forEach(function(it){emergTotal+=it.valorUSD||0})});
+    if(emergBlocos.length===0||emergTotal===0){
+      out.push({i:"🛡",t:"Configure sua reserva de emergência",c:"#ff8800",go:"goTo('emergencial')"});
+    }
   }catch(e){}
   try{
     if(aporteBlocos&&aporteBlocos.length>0){
@@ -1074,28 +938,6 @@ function renderDashboard(cons,totalVal,totalCost,totalPnl,totalPnlP){
     html+='</table>';
   }else{
     html+='<div style="color:#5a5a7a;font-size:12px;padding:10px 0">Nenhum ativo ainda</div>';
-  }
-  html+='</div>';
-
-  // Orçamento preview
-  var orcAtual=getOrcMes(orcMes,orcAno);
-  var orcFixas=orcAtual.fixas.reduce(function(s,i){return s+(i.valor||0)},0);
-  var orcVars=orcAtual.variaveis.reduce(function(s,i){return s+(i.valor||0)},0);
-  var orcExtD=orcAtual.extras.filter(function(i){return i.tipo==="despesa"}).reduce(function(s,i){return s+(i.valor||0)},0);
-  var orcReceita=getTotalReceitas(orcAtual);
-  var orcGasto=orcFixas+orcVars+orcExtD;
-  var orcSobra=orcReceita-orcGasto;
-  html+='<div class="dash-section" onclick="goTo(\'orcamento\')" style="border-color:#00aae422">';
-  html+='<div class="ds-header"><div class="ds-title" style="color:#00aae4">📋 Orçamento — '+MESES_NOME[orcMes]+'</div><div class="ds-arrow">→</div></div>';
-  if(orcReceita>0||orcGasto>0){
-    html+='<table class="dash-mini-table">';
-    html+='<tr><td style="color:#fff">Receita</td><td></td><td style="font-weight:600;color:#00e87e">'+fmtBRL(orcReceita)+'</td></tr>';
-    html+='<tr><td style="color:#fff">Fixas</td><td style="color:#6a6a8a">'+orcAtual.fixas.filter(function(i){return i.pago}).length+'/'+orcAtual.fixas.length+' pagas</td><td style="font-weight:600;color:#ff8800">'+fmtBRL(orcFixas)+'</td></tr>';
-    html+='<tr><td style="color:#fff">Variáveis</td><td style="color:#6a6a8a">'+orcAtual.variaveis.length+' itens</td><td style="font-weight:600;color:#00aae4">'+fmtBRL(orcVars)+'</td></tr>';
-    html+='<tr><td style="color:#fff;font-weight:700">Sobra</td><td></td><td style="font-weight:700;color:'+(orcSobra>=0?'#00e87e':'#ff4444')+'">'+fmtBRL(orcSobra)+'</td></tr>';
-    html+='</table>';
-  }else{
-    html+='<div style="color:#5a5a7a;font-size:12px;padding:10px 0">Configure seu orçamento mensal</div>';
   }
   html+='</div>';
 
@@ -1895,546 +1737,12 @@ function renderAporte(){
   document.getElementById("mainContent").innerHTML=html;
 }
 
-/* ═══ ORÇAMENTO MENSAL ═══ */
+/* ═══ CONSTANTES COMPARTILHADAS ═══ */
 var MESES_NOME=["","Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-var REC_CATS=[{k:"trabalho",l:"💼 Trabalho",c:"#00e87e"},{k:"investimentos",l:"📈 Investimentos",c:"#00aae4"},{k:"outros",l:"📦 Outros",c:"#9944ff"}];
-
-function orcPrevMonth(){orcMes--;if(orcMes<1){orcMes=12;orcAno--;}render();}
-function orcNextMonth(){orcMes++;if(orcMes>12){orcMes=1;orcAno++;}render();}
-
-// Receitas CRUD (por categoria: trabalho, investimentos, outros)
-function addReceita(cat){var d=getOrcMes(orcMes,orcAno);d.receitas[cat].push({id:Date.now(),nome:"",valor:0,obs:""});saveOrc();render();}
-function removeReceita(cat,id){var d=getOrcMes(orcMes,orcAno);d.receitas[cat]=d.receitas[cat].filter(function(i){return i.id!==id});saveOrc();render();}
-function updateReceita(cat,id,field,val){var d=getOrcMes(orcMes,orcAno);var it=d.receitas[cat].find(function(i){return i.id===id});if(!it)return;if(field==="nome")it.nome=val;else if(field==="valor")it.valor=parseFloat(val)||0;else if(field==="obs")it.obs=val;saveOrc();render();}
-
-function setMetaEconomia(v){var d=getOrcMes(orcMes,orcAno);d.metaEconomia=parseFloat(v)||0;saveOrc();render();}
-
-// Despesas Fixas CRUD
-function addFixa(){var d=getOrcMes(orcMes,orcAno);d.fixas.push({id:Date.now(),nome:"",valor:0,obs:"",pago:false});saveOrc();render();}
-function removeFixa(id){var d=getOrcMes(orcMes,orcAno);d.fixas=d.fixas.filter(function(i){return i.id!==id});saveOrc();render();}
-function updateFixa(id,field,val){var d=getOrcMes(orcMes,orcAno);var it=d.fixas.find(function(i){return i.id===id});if(!it)return;if(field==="nome")it.nome=val;else if(field==="valor")it.valor=parseFloat(val)||0;else if(field==="pago")it.pago=val;else if(field==="obs")it.obs=val;saveOrc();render();}
-
-// Despesas Variáveis CRUD
-function addVariavel(){var d=getOrcMes(orcMes,orcAno);d.variaveis.push({id:Date.now(),nome:"",valor:0,categoria:"outros",obs:"",pago:false});saveOrc();render();}
-function removeVariavel(id){var d=getOrcMes(orcMes,orcAno);d.variaveis=d.variaveis.filter(function(i){return i.id!==id});saveOrc();render();}
-function updateVariavel(id,field,val){var d=getOrcMes(orcMes,orcAno);var it=d.variaveis.find(function(i){return i.id===id});if(!it)return;if(field==="nome")it.nome=val;else if(field==="valor")it.valor=parseFloat(val)||0;else if(field==="categoria")it.categoria=val;else if(field==="obs")it.obs=val;else if(field==="pago")it.pago=val;saveOrc();render();}
-
-// Extras CRUD
-function addExtra(){var d=getOrcMes(orcMes,orcAno);d.extras.push({id:Date.now(),nome:"",valor:0,tipo:"despesa",obs:"",pago:false});saveOrc();render();}
-function removeExtra(id){var d=getOrcMes(orcMes,orcAno);d.extras=d.extras.filter(function(i){return i.id!==id});saveOrc();render();}
-function updateExtra(id,field,val){var d=getOrcMes(orcMes,orcAno);var it=d.extras.find(function(i){return i.id===id});if(!it)return;if(field==="nome")it.nome=val;else if(field==="valor")it.valor=parseFloat(val)||0;else if(field==="tipo")it.tipo=val;else if(field==="obs")it.obs=val;else if(field==="pago")it.pago=val;saveOrc();render();}
-
-// Cartões de Crédito CRUD
-function addCartao(){var d=getOrcMes(orcMes,orcAno);d.cartoes.push({id:Date.now(),nome:"",bandeira:"visa",gastos:[],faturaValor:0,faturaFechada:false});saveOrc();render();}
-function removeCartao(id){var d=getOrcMes(orcMes,orcAno);d.cartoes=d.cartoes.filter(function(c){return c.id!==id});saveOrc();render();}
-function updateCartao(id,field,val){var d=getOrcMes(orcMes,orcAno);var c=d.cartoes.find(function(c){return c.id===id});if(!c)return;if(field==="nome")c.nome=val;else if(field==="bandeira")c.bandeira=val;else if(field==="faturaValor")c.faturaValor=parseFloat(val)||0;else if(field==="faturaFechada")c.faturaFechada=val;saveOrc();render();}
-function addGastoCartao(cartaoId){var d=getOrcMes(orcMes,orcAno);var c=d.cartoes.find(function(c){return c.id===cartaoId});if(!c)return;c.gastos.push({id:Date.now(),nome:"",valor:0,obs:""});saveOrc();render();}
-function removeGastoCartao(cartaoId,gastoId){var d=getOrcMes(orcMes,orcAno);var c=d.cartoes.find(function(c){return c.id===cartaoId});if(!c)return;c.gastos=c.gastos.filter(function(g){return g.id!==gastoId});saveOrc();render();}
-function updateGastoCartao(cartaoId,gastoId,field,val){var d=getOrcMes(orcMes,orcAno);var c=d.cartoes.find(function(c){return c.id===cartaoId});if(!c)return;var g=c.gastos.find(function(g){return g.id===gastoId});if(!g)return;if(field==="nome")g.nome=val;else if(field==="valor")g.valor=parseFloat(val)||0;else if(field==="obs")g.obs=val;saveOrc();render();}
-var cartaoExpanded={};
-function toggleCartao(id){cartaoExpanded[id]=!cartaoExpanded[id];render();}
-var orcSectionOpen={};
-function toggleOrcSection(key){orcSectionOpen[key]=!orcSectionOpen[key];render();}
-
-// Parcelamentos CRUD (global)
-function addParcela(){parcelas.push({id:Date.now(),nome:"",valorTotal:0,qtdParcelas:1,mesInicio:orcMes,anoInicio:orcAno,obs:""});saveParc();render();}
-function removeParcela(id){parcelas=parcelas.filter(function(p){return p.id!==id});saveParc();render();}
-function updateParcela(id,field,val){var p=parcelas.find(function(p){return p.id===id});if(!p)return;if(field==="nome")p.nome=val;else if(field==="valorTotal")p.valorTotal=parseFloat(val)||0;else if(field==="qtdParcelas")p.qtdParcelas=parseInt(val)||1;else if(field==="obs")p.obs=val;saveParc();render();}
-
-// Metas de Longo Prazo CRUD (global)
-function addMetaLP(){metasLP.push({id:Date.now(),nome:"",valorAlvo:0,prazo:"",acumulado:0,obs:""});saveMetaLP();render();}
-function removeMetaLP(id){metasLP=metasLP.filter(function(m){return m.id!==id});saveMetaLP();render();}
-function updateMetaLP(id,field,val){var m=metasLP.find(function(m){return m.id===id});if(!m)return;if(field==="nome")m.nome=val;else if(field==="valorAlvo")m.valorAlvo=parseFloat(val)||0;else if(field==="prazo")m.prazo=val;else if(field==="acumulado")m.acumulado=parseFloat(val)||0;else if(field==="obs")m.obs=val;saveMetaLP();render();}
-
-// Helper: parcelas ativas no mês
-function getParcelasDoMes(m,a){
-  var result=[];
-  parcelas.forEach(function(p){
-    var mi=p.mesInicio,ai=p.anoInicio,qt=p.qtdParcelas||1;
-    var totalMesesInicio=(ai*12)+mi;
-    var totalMesesAtual=(a*12)+m;
-    var diff=totalMesesAtual-totalMesesInicio;
-    if(diff>=0&&diff<qt){
-      var valorParc=Math.round((p.valorTotal||0)/qt*100)/100;
-      result.push({nome:p.nome,parcAtual:diff+1,totalParc:qt,valor:valorParc,obs:p.obs,id:p.id});
-    }
-  });
-  return result;
-}
-
-var CAT_VARIAVEIS=[
-  {v:"alimentacao",l:"Alimentacao",i:"🍔",c:"#ff6b35"},
-  {v:"transporte",l:"Transporte",i:"🚗",c:"#00aae4"},
-  {v:"lazer",l:"Lazer",i:"🎮",c:"#9944ff"},
-  {v:"saude",l:"Saude",i:"💊",c:"#00e87e"},
-  {v:"educacao",l:"Educacao",i:"📚",c:"#ffcc00"},
-  {v:"moradia",l:"Moradia",i:"🏠",c:"#ff8800"},
-  {v:"compras",l:"Compras",i:"🛒",c:"#e91e63"},
-  {v:"outros",l:"Outros",i:"📦",c:"#6a6a8a"}
-];
-
-// Helper: total receitas
-function getTotalReceitas(d){
-  var t=0;
-  REC_CATS.forEach(function(rc){(d.receitas[rc.k]||[]).forEach(function(i){t+=i.valor||0})});
-  return t;
-}
-
-// Comparativo mês anterior
-function getOrcPrev(m,a){
-  var pm=m===1?12:m-1,pa=m===1?a-1:a;
-  var k=orcKey(pm,pa);
-  return orcData[k]||null;
-}
-
-function orcToggleHtml(id,checked,fn){
-  return '<label class="orc-toggle"><input type="checkbox" '+(checked?'checked':'')+' onchange="'+fn+'"><span class="slider"></span></label>';
-}
-function renderOrcamento(){
-  var d=getOrcMes(orcMes,orcAno);
-  var totalReceitas=getTotalReceitas(d);
-  var totalFixasPagas=d.fixas.filter(function(i){return i.pago}).reduce(function(s,i){return s+(i.valor||0)},0);
-  var totalFixas=d.fixas.reduce(function(s,i){return s+(i.valor||0)},0);
-  var totalVarPagas=d.variaveis.filter(function(i){return i.pago}).reduce(function(s,i){return s+(i.valor||0)},0);
-  var totalVariaveis=d.variaveis.reduce(function(s,i){return s+(i.valor||0)},0);
-  var totalExtDPagas=d.extras.filter(function(i){return i.tipo==="despesa"&&i.pago}).reduce(function(s,i){return s+(i.valor||0)},0);
-  var totalExtrasDespesa=d.extras.filter(function(i){return i.tipo==="despesa"}).reduce(function(s,i){return s+(i.valor||0)},0);
-  var totalFaturas=d.cartoes.filter(function(c){return c.faturaFechada}).reduce(function(s,c){return s+(c.faturaValor||0)},0);
-  var parcMes=getParcelasDoMes(orcMes,orcAno);
-  var totalParc=parcMes.reduce(function(s,p){return s+p.valor},0);
-  var gastoTotal=totalFixasPagas+totalVarPagas+totalExtDPagas+totalFaturas+totalParc;
-  var gastoPrevisto=totalFixas+totalVariaveis+totalExtrasDespesa+totalFaturas+totalParc;
-  var sobra=totalReceitas-gastoTotal;
-  var pctGasto=totalReceitas>0?(gastoTotal/totalReceitas*100):0;
-  var metaEco=d.metaEconomia||0;
-  var pctMeta=metaEco>0?(sobra/metaEco*100):0;
-  var nPagas=d.fixas.filter(function(i){return i.pago}).length;
-  var nFixas=d.fixas.length;
-  var alertas=[];
-  if(pctGasto>100)alertas.push({t:"danger",m:"Gastos acima da receita em "+fmtBRL(gastoTotal-totalReceitas),i:"🚨"});
-  else if(pctGasto>80)alertas.push({t:"warn",m:"Gastos em "+pctGasto.toFixed(0)+"% da receita",i:"⚠️"});
-  if(nFixas>0&&nPagas<nFixas)alertas.push({t:"info",m:(nFixas-nPagas)+" conta(s) fixa(s) pendente(s)",i:"📌"});
-  var nCartAberto=d.cartoes.filter(function(c){return!c.faturaFechada}).length;
-  if(nCartAberto>0)alertas.push({t:"info",m:nCartAberto+" fatura(s) aberta(s)",i:"💳"});
-  if(metaEco>0&&sobra<metaEco&&sobra>=0)alertas.push({t:"warn",m:"Economia abaixo da meta: faltam "+fmtBRL(metaEco-sobra),i:"🎯"});
-  var catTotais={};
-  d.variaveis.forEach(function(it){var c=it.categoria||"outros";catTotais[c]=(catTotais[c]||0)+(it.valor||0)});
-  var prev=getOrcPrev(orcMes,orcAno);
-
-  // helper: section open?
-  function isOpen(k){return !!orcSectionOpen[k];}
-  function chev(k){return '<span class="orc-chev'+(isOpen(k)?' open':'')+'">&#9660;</span>';}
-  function bodyClass(k){return 'orc-card-body'+(isOpen(k)?'':' collapsed');}
-
-  var html='<div class="orc-wrap">';
-
-  // ── HEADER ──
-  html+='<div class="orc-header">';
-  html+='<div><div style="font-size:20px;font-weight:800;color:#e8e8f8;letter-spacing:-.3px">Orcamento Mensal</div>';
-  html+='<div style="color:#4a4a6a;font-size:12px;margin-top:2px">Controle financeiro de '+MESES_NOME[orcMes]+' '+orcAno+'</div></div>';
-  html+='<div style="display:flex;align-items:center;gap:12px">';
-  html+='<div class="orc-month-nav">';
-  html+='<button class="orc-month-btn" onclick="orcPrevMonth()" title="Mes anterior">&#9664;</button>';
-  html+='<div class="orc-month-label">'+MESES_NOME[orcMes]+' '+orcAno+'</div>';
-  html+='<button class="orc-month-btn" onclick="orcNextMonth()" title="Proximo mes">&#9654;</button>';
-  html+='</div></div></div>';
-
-  // ── ALERTAS ──
-  if(alertas.length>0){
-    alertas.forEach(function(a){
-      var bg=a.t==="danger"?"#ff444412":a.t==="warn"?"#ff880012":"#6c5ce712";
-      var bc=a.t==="danger"?"#ff444428":a.t==="warn"?"#ff880028":"#6c5ce728";
-      var tc=a.t==="danger"?"#ff6666":a.t==="warn"?"#ffaa44":"#8a7ce7";
-      html+='<div class="orc-alert" style="background:'+bg+';border:1px solid '+bc+';color:'+tc+'"><span>'+a.i+'</span> '+a.m+'</div>';
-    });
-  }
-
-  // ── KPI ROW (always visible, no collapse) ──
-  html+='<div class="orc-kpi-row">';
-  html+='<div class="orc-kpi" style="border-color:#00e87e18"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:#00e87e;border-radius:12px 12px 0 0"></div><div class="orc-kpi-label">Receita</div><div class="orc-kpi-value" style="color:#00e87e">'+fmtBRL(totalReceitas)+'</div></div>';
-  html+='<div class="orc-kpi" style="border-color:#ff444418"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:#ff4444;border-radius:12px 12px 0 0"></div><div class="orc-kpi-label">Gasto Real</div><div class="orc-kpi-value" style="color:#ff4444">'+fmtBRL(gastoTotal)+'</div><div class="orc-kpi-sub">'+pctGasto.toFixed(1)+'% da receita</div></div>';
-  html+='<div class="orc-kpi" style="border-color:'+(sobra>=0?'#6c5ce718':'#ff444418')+'"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:'+(sobra>=0?'#6c5ce7':'#ff4444')+';border-radius:12px 12px 0 0"></div><div class="orc-kpi-label">Saldo</div><div class="orc-kpi-value" style="color:'+(sobra>=0?'#6c5ce7':'#ff4444')+'">'+fmtBRL(sobra)+'</div><div class="orc-kpi-sub">'+(sobra>=0?'Disponivel':'Deficit')+'</div></div>';
-  html+='<div class="orc-kpi" style="border-color:#ff880018"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:#ff8800;border-radius:12px 12px 0 0"></div><div class="orc-kpi-label">Previsto</div><div class="orc-kpi-value" style="color:#ff8800">'+fmtBRL(gastoPrevisto)+'</div><div class="orc-kpi-sub">'+nFixas+' fixas · '+d.variaveis.length+' var · '+d.cartoes.length+' cart</div></div>';
-  html+='</div>';
-
-  // ── HEALTH BAR (always visible) ──
-  if(totalReceitas>0){
-    var barF=Math.min(totalFixasPagas/totalReceitas*100,100);
-    var barV=Math.min(totalVarPagas/totalReceitas*100,Math.max(0,100-barF));
-    var barCr=Math.min(totalFaturas/totalReceitas*100,Math.max(0,100-barF-barV));
-    var barPr=Math.min(totalParc/totalReceitas*100,Math.max(0,100-barF-barV-barCr));
-    var barEx=Math.min(totalExtDPagas/totalReceitas*100,Math.max(0,100-barF-barV-barCr-barPr));
-    var barS=Math.max(0,100-barF-barV-barCr-barPr-barEx);
-    html+='<div class="orc-health">';
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-    html+='<span style="color:#c0c0d8;font-size:12px;font-weight:600">Composicao</span>';
-    html+='<span style="color:'+(pctGasto>80?'#ff8800':'#4a4a6a')+';font-size:11px;font-weight:600">'+pctGasto.toFixed(1)+'% comprometido</span></div>';
-    html+='<div class="orc-health-bar">';
-    if(barF>0)html+='<div style="width:'+barF+'%;background:#ff8800"></div>';
-    if(barV>0)html+='<div style="width:'+barV+'%;background:#6c5ce7"></div>';
-    if(barCr>0)html+='<div style="width:'+barCr+'%;background:#e68a00"></div>';
-    if(barPr>0)html+='<div style="width:'+barPr+'%;background:#aa66aa"></div>';
-    if(barEx>0)html+='<div style="width:'+barEx+'%;background:#ff4444"></div>';
-    if(barS>0)html+='<div style="width:'+barS+'%;background:#00e87e22"></div>';
-    html+='</div>';
-    html+='<div class="orc-health-legend">';
-    html+='<span class="orc-health-dot" style="color:#ff8800"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#ff8800;margin-right:3px"></span>Fixas</span>';
-    html+='<span class="orc-health-dot" style="color:#6c5ce7"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#6c5ce7;margin-right:3px"></span>Var</span>';
-    if(totalFaturas>0)html+='<span class="orc-health-dot" style="color:#e68a00"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#e68a00;margin-right:3px"></span>Cartoes</span>';
-    if(totalParc>0)html+='<span class="orc-health-dot" style="color:#aa66aa"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#aa66aa;margin-right:3px"></span>Parcelas</span>';
-    html+='<span class="orc-health-dot" style="color:#00e87e"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#00e87e;margin-right:3px"></span>Livre</span>';
-    html+='</div></div>';
-  }
-
-  // ── META ECONOMIA ──
-  if(metaEco>0){
-    var mc2=pctMeta>=100?'#00e87e':(pctMeta>=50?'#ffcc00':'#ff8800');
-    html+='<div class="orc-health" style="border-color:'+mc2+'18">';
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-    html+='<span style="color:#c0c0d8;font-size:12px;font-weight:600">🎯 Meta Economia</span>';
-    html+='<span style="color:'+mc2+';font-size:12px;font-weight:700">'+fmtBRL(Math.max(0,sobra))+' / '+fmtBRL(metaEco)+' ('+Math.min(pctMeta,100).toFixed(0)+'%)</span></div>';
-    html+='<div class="orc-progress"><div class="orc-progress-fill" style="width:'+Math.min(pctMeta,100)+'%;background:'+mc2+'"></div></div>';
-    html+='</div>';
-  }
-
-  // ── PARCELAS ATIVAS ──
-  if(parcMes.length>0){
-    html+='<div class="orc-card" style="border-color:#aa66aa22">';
-    html+='<div class="orc-card-head" onclick="toggleOrcSection(\'parcAtivas\')"><div class="orc-card-title" style="color:#aa66aa">🏦 Parcelas Ativas <span class="orc-card-count" style="background:#aa66aa18;color:#aa66aa">'+parcMes.length+'</span></div>';
-    html+='<div style="display:flex;align-items:center;gap:8px"><span style="color:#aa66aa;font-size:13px;font-weight:700">'+fmtBRL(totalParc)+'</span>'+chev('parcAtivas')+'</div></div>';
-    html+='<div class="'+bodyClass('parcAtivas')+'">';
-    parcMes.forEach(function(p){
-      html+='<div class="orc-row">';
-      html+='<div class="orc-row-icon" style="background:#aa66aa15;color:#aa66aa">🏦</div>';
-      html+='<div class="orc-row-body"><div class="orc-row-name">'+esc(p.nome)+'</div>';
-      html+='<div class="orc-row-meta"><span class="orc-pill" style="background:#aa66aa18;color:#aa66aa">'+p.parcAtual+'/'+p.totalParc+'</span><span>'+(p.totalParc-p.parcAtual)+' restantes</span></div></div>';
-      html+='<div class="orc-row-actions"><span class="orc-val" style="color:#aa66aa">'+fmtBRL(p.valor)+'</span></div>';
-      html+='</div>';
-    });
-    html+='</div></div>';
-  }
-
-  // ── TWO COLUMN: FIXAS + VARIAVEIS ──
-  html+='<div class="orc-2col">';
-
-  // -- CONTAS FIXAS --
-  html+='<div class="orc-card" style="border-color:#ff880022">';
-  html+='<div class="orc-card-head" onclick="toggleOrcSection(\'fixas\')"><div class="orc-card-title" style="color:#ff8800">📌 Contas Fixas <span class="orc-card-count" style="background:#ff880015;color:#ff8800">'+nPagas+'/'+nFixas+'</span></div>';
-  html+='<div style="display:flex;align-items:center;gap:8px"><span style="color:#ff8800;font-size:12px;font-weight:700">'+fmtBRL(totalFixas)+'</span>'+chev('fixas')+'</div></div>';
-  html+='<div class="'+bodyClass('fixas')+'">';
-  if(d.fixas.length===0){
-    html+='<div class="orc-empty">Nenhuma conta fixa</div>';
-  }else{
-    d.fixas.forEach(function(it){
-      html+='<div class="orc-row" style="'+(it.pago?'opacity:.5':'')+'">';
-      html+='<div class="orc-row-icon" style="background:#ff880012;color:#ff8800">📄</div>';
-      html+='<div class="orc-row-body">';
-      html+='<input type="text" value="'+esc(it.nome)+'" onchange="updateFixa('+it.id+',\'nome\',this.value)" placeholder="Nome" class="orc-inp" style="color:'+(it.pago?'#4a4a6a':'#e0e0f0')+';font-weight:600;width:100%;padding:0;'+(it.pago?'text-decoration:line-through':'')+'">';
-      html+='<div class="orc-row-meta">';
-      if(it.obs)html+='<span class="orc-pill" style="background:#6c5ce712;color:#7a6ad8">'+esc(it.obs)+'</span>';
-      html+=(it.pago?'<span class="orc-pill" style="background:#00e87e15;color:#00e87e">PAGO</span>':'<span class="orc-pill" style="background:#ff880015;color:#ff8800">PENDENTE</span>');
-      html+='</div>';
-      html+='<input type="text" value="'+esc(it.obs||"")+'" onchange="updateFixa('+it.id+',\'obs\',this.value)" placeholder="obs..." class="orc-obs-inp">';
-      html+='</div>';
-      html+='<div class="orc-row-actions">';
-      html+=orcToggleHtml(it.id,it.pago,"updateFixa("+it.id+",'pago',this.checked)");
-      html+='<input type="number" value="'+(it.valor||"")+'" onchange="updateFixa('+it.id+',\'valor\',this.value)" placeholder="0" class="orc-inp-val" style="color:#ff8800;width:90px">';
-      html+='<button class="orc-del" onclick="removeFixa('+it.id+')">&#128465;</button>';
-      html+='</div></div>';
-    });
-  }
-  html+='<div style="padding:8px 0"><button class="orc-btn-add" style="color:#ff8800;border-color:#ff880033" onclick="addFixa()">+ Nova Conta</button></div>';
-  html+='</div></div>';
-
-  // -- DESPESAS VARIAVEIS --
-  html+='<div class="orc-card" style="border-color:#6c5ce722">';
-  html+='<div class="orc-card-head" onclick="toggleOrcSection(\'variaveis\')"><div class="orc-card-title" style="color:#6c5ce7">🛒 Despesas Variaveis <span class="orc-card-count" style="background:#6c5ce715;color:#6c5ce7">'+d.variaveis.length+'</span></div>';
-  html+='<div style="display:flex;align-items:center;gap:8px"><span style="color:#6c5ce7;font-size:12px;font-weight:700">'+fmtBRL(totalVariaveis)+'</span>'+chev('variaveis')+'</div></div>';
-  html+='<div class="'+bodyClass('variaveis')+'">';
-  if(d.variaveis.length===0){
-    html+='<div class="orc-empty">Nenhuma despesa variavel</div>';
-  }else{
-    d.variaveis.forEach(function(it){
-      var ci=CAT_VARIAVEIS.find(function(c){return c.v===it.categoria})||CAT_VARIAVEIS[7];
-      html+='<div class="orc-row" style="'+(it.pago?'opacity:.5':'')+'">';
-      html+='<div class="orc-row-icon" style="background:'+ci.c+'12;color:'+ci.c+'">'+ci.i+'</div>';
-      html+='<div class="orc-row-body">';
-      html+='<input type="text" value="'+esc(it.nome)+'" onchange="updateVariavel('+it.id+',\'nome\',this.value)" placeholder="Descricao" class="orc-inp" style="color:'+(it.pago?'#4a4a6a':'#e0e0f0')+';font-weight:600;width:100%;padding:0;'+(it.pago?'text-decoration:line-through':'')+'">';
-      html+='<div class="orc-row-meta">';
-      html+='<span class="orc-pill" style="background:'+ci.c+'15;color:'+ci.c+'">'+ci.l+'</span>';
-      html+='<select onchange="updateVariavel('+it.id+',\'categoria\',this.value)" style="background:transparent;border:none;color:#4a4a6a;font-size:10px;cursor:pointer;font-family:inherit">';
-      CAT_VARIAVEIS.forEach(function(c){html+='<option value="'+c.v+'"'+(it.categoria===c.v?' selected':'')+'>'+c.i+' '+c.l+'</option>'});
-      html+='</select>';
-      html+=(it.pago?'<span class="orc-pill" style="background:#00e87e15;color:#00e87e">PAGO</span>':'<span class="orc-pill" style="background:#ff880015;color:#ff8800">PENDENTE</span>');
-      html+='</div>';
-      html+='<input type="text" value="'+esc(it.obs||"")+'" onchange="updateVariavel('+it.id+',\'obs\',this.value)" placeholder="obs..." class="orc-obs-inp">';
-      html+='</div>';
-      html+='<div class="orc-row-actions">';
-      html+=orcToggleHtml(it.id,it.pago,"updateVariavel("+it.id+",'pago',this.checked)");
-      html+='<input type="number" value="'+(it.valor||"")+'" onchange="updateVariavel('+it.id+',\'valor\',this.value)" placeholder="0" class="orc-inp-val" style="color:#6c5ce7;width:90px">';
-      html+='<button class="orc-del" onclick="removeVariavel('+it.id+')">&#128465;</button>';
-      html+='</div></div>';
-    });
-  }
-  html+='<div style="padding:8px 0"><button class="orc-btn-add" style="color:#6c5ce7;border-color:#6c5ce733" onclick="addVariavel()">+ Nova Despesa</button></div>';
-  html+='</div></div>';
-  html+='</div>'; // close orc-2col
-
-  // ── TWO COLUMN: CARTOES + EXTRAS ──
-  html+='<div class="orc-2col" style="margin-top:0">';
-
-  // -- CARTOES --
-  html+='<div class="orc-card" style="border-color:#e68a0022">';
-  html+='<div class="orc-card-head" onclick="toggleOrcSection(\'cartoes\')"><div class="orc-card-title" style="color:#e68a00">💳 Cartoes <span class="orc-card-count" style="background:#e68a0015;color:#e68a00">'+d.cartoes.length+'</span></div>';
-  html+='<div style="display:flex;align-items:center;gap:8px"><span style="color:#e68a00;font-size:12px;font-weight:700">'+fmtBRL(totalFaturas)+'</span>'+chev('cartoes')+'</div></div>';
-  html+='<div class="'+bodyClass('cartoes')+'">';
-  if(d.cartoes.length===0){
-    html+='<div class="orc-empty">Nenhum cartao</div>';
-  }else{
-    d.cartoes.forEach(function(cart){
-      var gastoCart=cart.gastos.reduce(function(s,g){return s+(g.valor||0)},0);
-      var isExp=cartaoExpanded[cart.id];
-      html+='<div class="orc-row" style="flex-direction:column;align-items:stretch;padding:0;border:1px solid '+(cart.faturaFechada?'#00e87e18':'#e68a0022')+'">';
-      html+='<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer" onclick="toggleCartao('+cart.id+')">';
-      html+='<div class="orc-row-icon" style="background:#e68a0012;color:#e68a00">💳</div>';
-      html+='<div style="flex:1;min-width:0">';
-      html+='<input type="text" value="'+esc(cart.nome)+'" onchange="updateCartao('+cart.id+',\'nome\',this.value)" onclick="event.stopPropagation()" placeholder="Cartao" class="orc-inp" style="color:#e0e0f0;font-weight:600;width:100%;padding:0">';
-      html+='<div style="color:#4a4a6a;font-size:10px;margin-top:2px">'+cart.gastos.length+' lanc · '+fmtBRL(gastoCart)+'</div></div>';
-      html+='<div style="display:flex;align-items:center;gap:6px" onclick="event.stopPropagation()">';
-      html+='<input type="number" value="'+(cart.faturaValor||"")+'" onchange="updateCartao('+cart.id+',\'faturaValor\',this.value)" placeholder="Fatura" class="orc-inp-val" style="width:85px;color:#e68a00;font-size:12px">';
-      html+='<label style="display:flex;align-items:center;gap:3px;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;background:'+(cart.faturaFechada?'#00e87e12':'#ff444412')+';color:'+(cart.faturaFechada?'#00e87e':'#ff6666')+';border:1px solid '+(cart.faturaFechada?'#00e87e28':'#ff444428')+'">';
-      html+='<input type="checkbox" '+(cart.faturaFechada?'checked':'')+' onchange="updateCartao('+cart.id+',\'faturaFechada\',this.checked)" style="accent-color:#00e87e;width:11px;height:11px">'+(cart.faturaFechada?'Fechada':'Aberta')+'</label>';
-      html+='<button class="orc-del" onclick="removeCartao('+cart.id+')">&#128465;</button>';
-      html+='</div>';
-      html+='<span style="color:#3a3a5a;font-size:12px;margin-left:4px">'+(isExp?'▾':'▸')+'</span>';
-      html+='</div>';
-      if(isExp){
-        html+='<div style="padding:0 14px 12px;border-top:1px solid #12122a">';
-        cart.gastos.forEach(function(g){
-          html+='<div style="display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid #0a0a16">';
-          html+='<span style="color:#2a2a44;font-size:10px">&#9679;</span>';
-          html+='<input type="text" value="'+esc(g.nome)+'" onchange="updateGastoCartao('+cart.id+','+g.id+',\'nome\',this.value)" placeholder="Desc" class="orc-inp" style="flex:1;font-size:12px">';
-          html+='<input type="number" value="'+(g.valor||"")+'" onchange="updateGastoCartao('+cart.id+','+g.id+',\'valor\',this.value)" placeholder="0" class="orc-inp-val" style="width:75px;color:#e68a00;font-size:11px">';
-          html+='<button class="orc-del" onclick="removeGastoCartao('+cart.id+','+g.id+')" style="font-size:12px">&#10005;</button>';
-          html+='</div>';
-        });
-        html+='<button class="orc-btn-add" style="margin-top:6px;color:#e68a00;border-color:#e68a0028;font-size:10px;padding:3px 10px" onclick="addGastoCartao('+cart.id+')">+ Gasto</button>';
-        html+='</div>';
-      }
-      html+='</div>';
-    });
-  }
-  html+='<div style="padding:8px 0"><button class="orc-btn-add" style="color:#e68a00;border-color:#e68a0033" onclick="addCartao()">+ Cartao</button></div>';
-  html+='</div></div>';
-
-  // -- EXTRAS --
-  html+='<div class="orc-card" style="border-color:#9944ff22">';
-  html+='<div class="orc-card-head" onclick="toggleOrcSection(\'extras\')"><div class="orc-card-title" style="color:#9944ff">⚡ Extras <span class="orc-card-count" style="background:#9944ff15;color:#9944ff">'+d.extras.length+'</span></div>';
-  html+=chev('extras')+'</div>';
-  html+='<div class="'+bodyClass('extras')+'">';
-  if(d.extras.length===0){
-    html+='<div class="orc-empty">Receitas ou despesas extras</div>';
-  }else{
-    d.extras.forEach(function(it){
-      var isDespesa=it.tipo==="despesa";
-      var ec=isDespesa?'#ff4444':'#00e87e';
-      html+='<div class="orc-row" style="'+(isDespesa&&it.pago?'opacity:.5':'')+'">';
-      html+='<div class="orc-row-icon" style="background:'+ec+'12;color:'+ec+'">'+(isDespesa?'💸':'💰')+'</div>';
-      html+='<div class="orc-row-body">';
-      html+='<input type="text" value="'+esc(it.nome)+'" onchange="updateExtra('+it.id+',\'nome\',this.value)" placeholder="Descricao" class="orc-inp" style="color:#e0e0f0;font-weight:600;width:100%;padding:0">';
-      html+='<div class="orc-row-meta"><select onchange="updateExtra('+it.id+',\'tipo\',this.value)" style="background:transparent;border:none;color:'+ec+';font-size:10px;font-weight:700;cursor:pointer;font-family:inherit"><option value="despesa"'+(isDespesa?' selected':'')+'>💸 Despesa</option><option value="renda"'+(!isDespesa?' selected':'')+'>💰 Renda</option></select>';
-      if(isDespesa&&it.pago)html+='<span class="orc-pill" style="background:#00e87e15;color:#00e87e">PAGO</span>';
-      html+='</div>';
-      html+='<input type="text" value="'+esc(it.obs||"")+'" onchange="updateExtra('+it.id+',\'obs\',this.value)" placeholder="obs..." class="orc-obs-inp">';
-      html+='</div>';
-      html+='<div class="orc-row-actions">';
-      if(isDespesa)html+=orcToggleHtml(it.id,it.pago,"updateExtra("+it.id+",'pago',this.checked)");
-      html+='<input type="number" value="'+(it.valor||"")+'" onchange="updateExtra('+it.id+',\'valor\',this.value)" placeholder="0" class="orc-inp-val" style="color:'+ec+';width:90px">';
-      html+='<button class="orc-del" onclick="removeExtra('+it.id+')">&#128465;</button>';
-      html+='</div></div>';
-    });
-  }
-  html+='<div style="padding:8px 0"><button class="orc-btn-add" style="color:#9944ff;border-color:#9944ff33" onclick="addExtra()">+ Extra</button></div>';
-  html+='</div></div>';
-  html+='</div>'; // close 2col
-
-  // ── RECEITAS ──
-  html+='<div class="orc-card" style="border-color:#00e87e22">';
-  html+='<div class="orc-card-head" onclick="toggleOrcSection(\'receitas\')"><div class="orc-card-title" style="color:#00e87e">💼 Receitas <span class="orc-card-count" style="background:#00e87e15;color:#00e87e">'+fmtBRL(totalReceitas)+'</span></div>';
-  html+=chev('receitas')+'</div>';
-  html+='<div class="'+bodyClass('receitas')+'">';
-  REC_CATS.forEach(function(rc){
-    var itens=d.receitas[rc.k]||[];
-    var subTotal=itens.reduce(function(s,i){return s+(i.valor||0)},0);
-    html+='<div style="margin-bottom:10px">';
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:0 2px">';
-    html+='<span style="color:'+rc.c+';font-size:12px;font-weight:600">'+rc.l+' <span style="color:#3a3a5a;font-weight:400">'+fmtBRL(subTotal)+'</span></span>';
-    html+='<button class="orc-btn-add" style="color:'+rc.c+';border-color:'+rc.c+'33;font-size:10px;padding:2px 10px" onclick="addReceita(\''+rc.k+'\')">+ Add</button></div>';
-    itens.forEach(function(it){
-      html+='<div class="orc-row">';
-      html+='<div class="orc-row-icon" style="background:'+rc.c+'12;color:'+rc.c+'">'+rc.l.charAt(0)+'</div>';
-      html+='<div class="orc-row-body">';
-      html+='<input type="text" value="'+esc(it.nome)+'" onchange="updateReceita(\''+rc.k+'\','+it.id+',\'nome\',this.value)" placeholder="Descricao" class="orc-inp" style="color:#e0e0f0;font-weight:600;width:100%;padding:0">';
-      html+='<input type="text" value="'+esc(it.obs||"")+'" onchange="updateReceita(\''+rc.k+'\','+it.id+',\'obs\',this.value)" placeholder="obs..." class="orc-obs-inp">';
-      html+='</div>';
-      html+='<div class="orc-row-actions">';
-      html+='<input type="number" value="'+(it.valor||"")+'" onchange="updateReceita(\''+rc.k+'\','+it.id+',\'valor\',this.value)" placeholder="0" class="orc-inp-val" style="color:'+rc.c+';width:100px">';
-      html+='<button class="orc-del" onclick="removeReceita(\''+rc.k+'\','+it.id+')">&#128465;</button>';
-      html+='</div></div>';
-    });
-    html+='</div>';
-  });
-  html+='<div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #12122a;margin-top:6px">';
-  html+='<span style="color:#3a3a5a;font-size:11px">🎯 Meta economia:</span>';
-  html+='<input type="number" value="'+(metaEco||"")+'" onchange="setMetaEconomia(this.value)" placeholder="0" class="orc-inp-val" style="width:110px;color:#00e87e">';
-  html+='</div></div>';
-
-  // ── TWO COL: CATEGORIAS + PARCELAMENTOS ──
-  html+='<div class="orc-2col">';
-
-  // -- Gastos por Categoria --
-  var catKeys=Object.keys(catTotais).sort(function(a,b){return catTotais[b]-catTotais[a]});
-  html+='<div class="orc-card">';
-  html+='<div class="orc-card-head" onclick="toggleOrcSection(\'categorias\')"><div class="orc-card-title">📊 Gastos por Categoria</div>'+chev('categorias')+'</div>';
-  html+='<div class="'+bodyClass('categorias')+'">';
-  if(catKeys.length===0){
-    html+='<div class="orc-empty">Adicione despesas variaveis</div>';
-  }else{
-    var maxCat=catTotais[catKeys[0]]||1;
-    catKeys.forEach(function(ck){
-      var ci=CAT_VARIAVEIS.find(function(c){return c.v===ck})||CAT_VARIAVEIS[7];
-      var pct=maxCat>0?(catTotais[ck]/maxCat*100):0;
-      html+='<div class="orc-cat-row">';
-      html+='<div class="orc-cat-icon">'+ci.i+'</div>';
-      html+='<div class="orc-cat-name">'+ci.l+'</div>';
-      html+='<div class="orc-cat-bar"><div class="orc-cat-fill" style="width:'+pct+'%;background:'+ci.c+'"></div></div>';
-      html+='<div class="orc-cat-val" style="color:'+ci.c+'">'+fmtBRL(catTotais[ck])+'</div>';
-      html+='</div>';
-    });
-  }
-  html+='</div></div>';
-
-  // -- Parcelamentos --
-  html+='<div class="orc-card" style="border-color:#aa66aa22">';
-  html+='<div class="orc-card-head" onclick="toggleOrcSection(\'parcelamentos\')"><div class="orc-card-title" style="color:#aa66aa">📅 Parcelamentos</div>';
-  html+='<div style="display:flex;align-items:center;gap:8px"><span style="color:#aa66aa;font-size:12px;font-weight:700">'+parcelas.length+'</span>'+chev('parcelamentos')+'</div></div>';
-  html+='<div class="'+bodyClass('parcelamentos')+'">';
-  if(parcelas.length===0){
-    html+='<div class="orc-empty">Nenhum parcelamento</div>';
-  }else{
-    parcelas.forEach(function(p){
-      var valorM=p.qtdParcelas>0?Math.round(p.valorTotal/p.qtdParcelas*100)/100:0;
-      var totalMi=(p.anoInicio*12)+p.mesInicio;
-      var totalMa=(orcAno*12)+orcMes;
-      var diff=totalMa-totalMi;
-      var ativo=diff>=0&&diff<p.qtdParcelas;
-      var parcAtual=ativo?diff+1:0;
-      html+='<div class="orc-row">';
-      html+='<div class="orc-row-icon" style="background:#aa66aa12;color:#aa66aa">📅</div>';
-      html+='<div class="orc-row-body">';
-      html+='<input type="text" value="'+esc(p.nome)+'" onchange="updateParcela('+p.id+',\'nome\',this.value)" placeholder="Nome" class="orc-inp" style="color:#e0e0f0;font-weight:600;width:100%;padding:0">';
-      html+='<div class="orc-row-meta">';
-      html+=(ativo?'<span class="orc-pill" style="background:#00e87e15;color:#00e87e">'+parcAtual+'/'+p.qtdParcelas+'</span>':'<span class="orc-pill" style="background:#3a3a5a22;color:#3a3a5a">Fim</span>');
-      html+='<span>'+fmtBRL(valorM)+'/mes</span></div>';
-      html+='</div>';
-      html+='<div class="orc-row-actions" style="gap:4px">';
-      html+='<input type="number" value="'+(p.valorTotal||"")+'" onchange="updateParcela('+p.id+',\'valorTotal\',this.value)" placeholder="Total" class="orc-inp-val" style="width:75px;color:#aa66aa;font-size:11px" title="Valor total">';
-      html+='<span style="color:#2a2a44;font-size:10px">em</span>';
-      html+='<input type="number" value="'+(p.qtdParcelas||"")+'" onchange="updateParcela('+p.id+',\'qtdParcelas\',this.value)" min="1" class="orc-inp-val" style="width:45px;color:#aa66aa;font-size:11px;text-align:center" title="Parcelas">';
-      html+='<span style="color:#2a2a44;font-size:10px">x</span>';
-      html+='<button class="orc-del" onclick="removeParcela('+p.id+')">&#128465;</button>';
-      html+='</div></div>';
-    });
-  }
-  html+='<div style="padding:8px 0"><button class="orc-btn-add" style="color:#aa66aa;border-color:#aa66aa33" onclick="addParcela()">+ Parcela</button></div>';
-  html+='</div></div>';
-  html+='</div>'; // close 2col
-
-  // ── HISTORICO 6 MESES ──
-  html+='<div class="orc-card">';
-  html+='<div class="orc-card-head" onclick="toggleOrcSection(\'historico\')"><div class="orc-card-title">📈 Evolucao — 6 Meses</div>';
-  html+='<div style="display:flex;align-items:center;gap:12px"><span style="font-size:9px;color:#00e87e;font-weight:600">● Receita</span><span style="font-size:9px;color:#6c5ce7;font-weight:600">● Gasto</span>'+chev('historico')+'</div></div>';
-  html+='<div class="'+bodyClass('historico')+'">';
-  var hist=[];
-  for(var hi=5;hi>=0;hi--){
-    var hm=orcMes-hi,ha=orcAno;while(hm<1){hm+=12;ha--;}
-    var hk=orcKey(hm,ha),hd=orcData[hk];
-    if(hd){migrateOrcEntry(hd);var hRec=getTotalReceitas(hd);var hGas=hd.fixas.filter(function(i){return i.pago}).reduce(function(s,i){return s+(i.valor||0)},0)+hd.variaveis.filter(function(i){return i.pago}).reduce(function(s,i){return s+(i.valor||0)},0)+hd.extras.filter(function(i){return i.tipo==="despesa"&&i.pago}).reduce(function(s,i){return s+(i.valor||0)},0)+hd.cartoes.filter(function(c){return c.faturaFechada}).reduce(function(s,c){return s+(c.faturaValor||0)},0)+getParcelasDoMes(hm,ha).reduce(function(s,p){return s+p.valor},0);hist.push({mes:MESES_NOME[hm].substring(0,3),receita:hRec,gasto:hGas,sobra:hRec-hGas});}
-    else{var hmn=orcMes-hi;while(hmn<1)hmn+=12;hist.push({mes:MESES_NOME[hmn].substring(0,3),receita:0,gasto:0,sobra:0});}
-  }
-  var maxH=1;hist.forEach(function(h){maxH=Math.max(maxH,h.receita,h.gasto)});
-  html+='<div class="orc-chart">';
-  hist.forEach(function(h){
-    var hR=Math.max(2,h.receita/maxH*100),hG=Math.max(2,h.gasto/maxH*100);
-    html+='<div class="orc-chart-bar">';
-    html+='<div class="orc-chart-col">';
-    html+='<div class="orc-chart-stick" style="height:'+hR+'px;background:#00e87e" title="Receita: '+fmtBRL(h.receita)+'"></div>';
-    html+='<div class="orc-chart-stick" style="height:'+hG+'px;background:#6c5ce7" title="Gasto: '+fmtBRL(h.gasto)+'"></div>';
-    html+='</div>';
-    html+='<div class="orc-chart-label">'+h.mes+'</div>';
-    html+='<div class="orc-chart-val" style="color:'+(h.sobra>=0?'#00e87e':'#ff4444')+'">'+fmtBRL(h.sobra)+'</div>';
-    html+='</div>';
-  });
-  html+='</div></div>';
-
-  // ── TWO COL: METAS LP + RESUMO ANUAL ──
-  html+='<div class="orc-2col">';
-
-  // -- Metas Longo Prazo --
-  html+='<div class="orc-card" style="border-color:#ffcc0022">';
-  html+='<div class="orc-card-head" onclick="toggleOrcSection(\'metaslp\')"><div class="orc-card-title" style="color:#ffcc00">🏆 Metas Longo Prazo</div>';
-  html+='<div style="display:flex;align-items:center;gap:8px"><span style="color:#ffcc00;font-size:12px;font-weight:700">'+metasLP.length+'</span>'+chev('metaslp')+'</div></div>';
-  html+='<div class="'+bodyClass('metaslp')+'">';
-  if(metasLP.length===0){
-    html+='<div class="orc-empty">Ex: Juntar R$10.000</div>';
-  }else{
-    metasLP.forEach(function(m){
-      var pm=m.valorAlvo>0?(m.acumulado/m.valorAlvo*100):0;
-      var mc=pm>=100?'#00e87e':(pm>=50?'#ffcc00':'#ff8800');
-      html+='<div class="orc-row" style="flex-direction:column;align-items:stretch;gap:8px;padding:14px">';
-      html+='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">';
-      html+='<div style="display:flex;align-items:center;gap:8px;flex:1"><div class="orc-row-icon" style="background:#ffcc0012;color:#ffcc00">🏆</div>';
-      html+='<input type="text" value="'+esc(m.nome)+'" onchange="updateMetaLP('+m.id+',\'nome\',this.value)" placeholder="Meta" class="orc-inp" style="color:#e0e0f0;font-weight:600;flex:1;padding:0"></div>';
-      html+='<div style="display:flex;gap:4px;align-items:center">';
-      html+='<input type="number" value="'+(m.valorAlvo||"")+'" onchange="updateMetaLP('+m.id+',\'valorAlvo\',this.value)" class="orc-inp-val" style="width:80px;color:#ffcc00;font-size:11px" title="Alvo">';
-      html+='<input type="number" value="'+(m.acumulado||"")+'" onchange="updateMetaLP('+m.id+',\'acumulado\',this.value)" class="orc-inp-val" style="width:80px;color:#00e87e;font-size:11px" title="Atual">';
-      html+='<input type="text" value="'+esc(m.prazo||"")+'" onchange="updateMetaLP('+m.id+',\'prazo\',this.value)" placeholder="Prazo" class="orc-inp-val" style="width:60px;color:#6a6a8a;font-size:10px;font-style:italic;text-align:center">';
-      html+='<button class="orc-del" onclick="removeMetaLP('+m.id+')">&#128465;</button></div></div>';
-      html+='<div class="orc-progress"><div class="orc-progress-fill" style="width:'+Math.min(pm,100)+'%;background:'+mc+'"></div></div>';
-      html+='<div style="display:flex;justify-content:space-between"><span style="color:#3a3a5a;font-size:10px">'+fmtBRL(m.acumulado||0)+' / '+fmtBRL(m.valorAlvo||0)+'</span><span style="color:'+mc+';font-size:10px;font-weight:700">'+pm.toFixed(0)+'%'+(pm>=100?' 🎉':'')+'</span></div>';
-      html+='</div>';
-    });
-  }
-  html+='<div style="padding:8px 0"><button class="orc-btn-add" style="color:#ffcc00;border-color:#ffcc0033" onclick="addMetaLP()">+ Meta</button></div>';
-  html+='</div></div>';
-
-  // -- Resumo Anual --
-  html+='<div class="orc-card">';
-  html+='<div class="orc-card-head" onclick="toggleOrcSection(\'resumo\')"><div class="orc-card-title">📊 Resumo '+orcAno+'</div>'+chev('resumo')+'</div>';
-  html+='<div class="'+bodyClass('resumo')+'">';
-  var anoRec=0,anoGas=0,melhorMes="",piorMes="",melhorSobra=-Infinity,piorSobra=Infinity,anoCatT={};
-  for(var am=1;am<=12;am++){var ak=orcKey(am,orcAno),ad=orcData[ak];if(ad){migrateOrcEntry(ad);var aR=getTotalReceitas(ad);var aG=ad.fixas.filter(function(i){return i.pago}).reduce(function(s,i){return s+(i.valor||0)},0)+ad.variaveis.filter(function(i){return i.pago}).reduce(function(s,i){return s+(i.valor||0)},0)+ad.extras.filter(function(i){return i.tipo==="despesa"&&i.pago}).reduce(function(s,i){return s+(i.valor||0)},0)+ad.cartoes.filter(function(c){return c.faturaFechada}).reduce(function(s,c){return s+(c.faturaValor||0)},0)+getParcelasDoMes(am,orcAno).reduce(function(s,p){return s+p.valor},0);var aS=aR-aG;anoRec+=aR;anoGas+=aG;if(aS>melhorSobra){melhorSobra=aS;melhorMes=MESES_NOME[am];}if(aR>0&&aS<piorSobra){piorSobra=aS;piorMes=MESES_NOME[am];}ad.variaveis.forEach(function(v){var c=v.categoria||"outros";anoCatT[c]=(anoCatT[c]||0)+(v.valor||0)});}}
-  var anoS=anoRec-anoGas;
-  html+='<div class="orc-summary-grid" style="margin-bottom:10px">';
-  html+='<div class="orc-summary-cell"><div class="orc-summary-cell-label">Recebido</div><div class="orc-summary-cell-val" style="color:#00e87e">'+fmtBRL(anoRec)+'</div></div>';
-  html+='<div class="orc-summary-cell"><div class="orc-summary-cell-label">Gasto</div><div class="orc-summary-cell-val" style="color:#ff4444">'+fmtBRL(anoGas)+'</div></div>';
-  html+='<div class="orc-summary-cell"><div class="orc-summary-cell-label">Economia</div><div class="orc-summary-cell-val" style="color:'+(anoS>=0?'#6c5ce7':'#ff4444')+'">'+fmtBRL(anoS)+'</div></div>';
-  html+='<div class="orc-summary-cell"><div class="orc-summary-cell-label">Media/Mes</div><div class="orc-summary-cell-val" style="color:#9944ff">'+fmtBRL(anoRec>0?anoS/12:0)+'</div></div>';
-  html+='</div>';
-  if(melhorMes)html+='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:4px"><span style="color:#00e87e;font-size:11px">🏆 <b>'+melhorMes+'</b> ('+fmtBRL(melhorSobra)+')</span>';
-  if(piorMes)html+='<span style="color:#ff4444;font-size:11px">⚠️ <b>'+piorMes+'</b> ('+fmtBRL(piorSobra)+')</span></div>';
-  var ack=Object.keys(anoCatT).sort(function(a,b){return anoCatT[b]-anoCatT[a]});
-  if(ack.length>0){var tc=CAT_VARIAVEIS.find(function(c){return c.v===ack[0]})||CAT_VARIAVEIS[7];html+='<div style="color:#4a4a6a;font-size:11px;margin-top:4px">'+tc.i+' Campea: <span style="color:'+tc.c+';font-weight:600">'+tc.l+'</span> ('+fmtBRL(anoCatT[ack[0]])+')</div>';}
-  html+='</div></div>';
-
-  html+='</div>'; // close 2col
-  html+='</div>'; // close orc-wrap
-  document.getElementById("mainContent").innerHTML=html;
-}
 
 /* ═══ EXPORT / IMPORT ═══ */
 function exportPortfolio(){
-  var data={version:"crypto_port_v3",exportedAt:new Date().toISOString(),wallets:wallets,emergBlocos:emergBlocos,aporteBlocos:aporteBlocos,orcData:orcData,parcelas:parcelas,metasLP:metasLP};
+  var data={version:"crypto_port_v3",exportedAt:new Date().toISOString(),wallets:wallets,emergBlocos:emergBlocos,aporteBlocos:aporteBlocos,metasLP:metasLP};
   var json=JSON.stringify(data,null,2);
   var blob=new Blob([json],{type:"application/json"});
   var url=URL.createObjectURL(blob);
@@ -2452,8 +1760,6 @@ function importPortfolio(ev){
         wallets=data.wallets;
         if(data.emergBlocos&&Array.isArray(data.emergBlocos)){emergBlocos=data.emergBlocos;saveEmerg();}
         if(data.aporteBlocos&&Array.isArray(data.aporteBlocos)){aporteBlocos=data.aporteBlocos;saveAporte();}
-        if(data.orcData&&typeof data.orcData==="object"){orcData=data.orcData;saveOrc();}
-        if(data.parcelas&&Array.isArray(data.parcelas)){parcelas=data.parcelas;saveParc();}
         if(data.metasLP&&Array.isArray(data.metasLP)){metasLP=data.metasLP;saveMetaLP();}
         saveState();fetchPrices();
         alert("✅ Importado! "+wallets.length+" carteira(s)"+(data.emergBlocos?" + "+data.emergBlocos.length+" emergenciais":"")+(data.aporteBlocos?" + "+data.aporteBlocos.length+" aportes":"")+".");
@@ -2520,45 +1826,10 @@ function fcRequestNotif(){
   });
 }
 
-function scheduleNotifCheck(){
-  // Check every 6 hours for pending bills
-  setInterval(checkPendingNotif,6*60*60*1000);
-  // Also check on load
-  setTimeout(checkPendingNotif,5000);
-}
-
-function checkPendingNotif(){
-  if(Notification.permission!=='granted')return;
-  var now=new Date();
-  var m=now.getMonth()+1,a=now.getFullYear();
-  var k=orcKey(m,a);
-  var d=orcData[k];
-  if(!d)return;
-  migrateOrcEntry(d);
-  var pendentes=d.fixas.filter(function(i){return!i.pago&&i.valor>0}).length;
-  var fatAberta=d.cartoes.filter(function(c){return!c.faturaFechada&&c.faturaValor>0}).length;
-  var msgs=[];
-  if(pendentes>0)msgs.push(pendentes+' conta(s) fixa(s) pendente(s)');
-  if(fatAberta>0)msgs.push(fatAberta+' fatura(s) aberta(s)');
-  if(msgs.length>0){
-    new Notification('FinControl — '+MESES_NOME[m],{
-      body:msgs.join(' e ')+'. Abra o app para conferir.',
-      icon:'./icons/icon-192x192.png',
-      badge:'./icons/icon-96x96.png',
-      tag:'fc-pending-'+m+'-'+a,
-      vibrate:[200,100,200]
-    });
-  }
-}
-
-// Auto-start notifications if previously enabled
-if(localStorage.getItem('fc_notif')==='1'&&'Notification' in window&&Notification.permission==='granted'){
-  fcNotifEnabled=true;
-  scheduleNotifCheck();
-}
+function scheduleNotifCheck(){/* pending-bills notifications removed — Orçamento module moved to Controle Paessoa */}
 
 /* ═══ SUPABASE AUTH + DATABASE ═══ */
-var FC_VERSION="2.4.1";
+var FC_VERSION="3.0.0";
 var SUPABASE_URL="https://oavfbsrlweujzhcwkpzy.supabase.co";
 var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hdmZic3Jsd2V1anpoY3drcHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTcxMzIsImV4cCI6MjA5MjA5MzEzMn0.YsCBRPP4BxD0jvCSyd4k3OgIGRczhv3pA5scvWqsQM8";
 
@@ -2587,8 +1858,6 @@ var SYNC_KEYS=[
   {key:"wallets",getLocal:function(){return wallets},setLocal:function(v){wallets=v;try{localStorage.setItem(STORAGE_KEY,JSON.stringify(v))}catch(e){}}},
   {key:"emergenciais",getLocal:function(){return emergBlocos},setLocal:function(v){emergBlocos=v;try{localStorage.setItem(EMERG_KEY,JSON.stringify(v))}catch(e){}}},
   {key:"aportes",getLocal:function(){return aporteBlocos},setLocal:function(v){aporteBlocos=v;try{localStorage.setItem(APORTE_KEY,JSON.stringify(v))}catch(e){}}},
-  {key:"orcamento",getLocal:function(){return orcData},setLocal:function(v){orcData=v;try{localStorage.setItem(ORC_KEY,JSON.stringify(v))}catch(e){}}},
-  {key:"parcelas",getLocal:function(){return parcelas},setLocal:function(v){parcelas=v;try{localStorage.setItem(PARC_KEY,JSON.stringify(v))}catch(e){}}},
   {key:"metas_lp",getLocal:function(){return metasLP},setLocal:function(v){metasLP=v;try{localStorage.setItem(META_LP_KEY,JSON.stringify(v))}catch(e){}}},
   {key:"snapshots",getLocal:function(){return snapshots},setLocal:function(v){snapshots=v;try{localStorage.setItem(SNAP_KEY,JSON.stringify(v))}catch(e){}}}
 ];
@@ -3197,7 +2466,7 @@ function renderRealizacoesSection(wId){
       html+='<div class="real-row-meta">Custo: <span>'+fmt$(r.precoMedio)+'</span></div>';
       if(r.taxas>0)html+='<div class="real-row-meta">Taxas: <span>'+fmt$(r.taxas)+'</span></div>';
       html+='<div class="real-row-meta">Data: <span>'+r.data+'</span></div>';
-      html+='<button class="orc-del" onclick="if(confirm(\'Remover esta realização?\'))removeRealizacao(\''+wId+'\',\''+r.id+'\')">&#128465;</button>';
+      html+='<button style="background:transparent;border:none;color:#ff4444;cursor:pointer;font-size:15px;opacity:.4;padding:2px 6px;line-height:1" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.4" onclick="if(confirm(\'Remover esta realização?\'))removeRealizacao(\''+wId+'\',\''+r.id+'\')">&#128465;</button>';
       html+='</div></div>';
     });
   }else{
@@ -3212,7 +2481,6 @@ function renderBottomNav(){
   var items=[
     {v:"dashboard",icon:"📊",label:"Home"},
     {v:"consolidated",icon:"💼",label:"Carteiras"},
-    {v:"orcamento",icon:"📋",label:"Orçamento"},
     {v:"emergencial",icon:"🚨",label:"Emerg."},
     {v:"aporte",icon:"💰",label:"Aportes"}
   ];
