@@ -81,6 +81,8 @@ body{background:#0a0a14;color:#e0e0e0;font-family:'Segoe UI','Inter',sans-serif;
 /* ═══ DASHBOARD ═══ */
 .dash-hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
 .dash-card{background:linear-gradient(135deg,#1a1a2e,#16163a);border:1px solid #2a2a4a;border-radius:14px;padding:20px 22px;transition:all .25s;cursor:default}
+.dash-card.clickable{cursor:pointer}
+.dash-card.clickable:active{transform:translateY(0);box-shadow:0 2px 8px rgba(123,97,255,0.15)}
 .dash-card:hover{border-color:#7b61ff55;transform:translateY(-2px);box-shadow:0 8px 30px rgba(123,97,255,0.08)}
 .dash-card .dc-icon{font-size:24px;margin-bottom:8px}
 .dash-card .dc-label{font-size:10px;color:#6a6a8a;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
@@ -345,6 +347,30 @@ body{padding-bottom:68px}
 }
 @media(min-width:769px){
 .resp-cards{display:none!important}
+}
+
+/* ═══ MOBILE-STACK TABLE PATTERN (no horizontal scroll) ═══ */
+.mobi-stack-wrap{overflow-x:auto}
+@media(max-width:768px){
+.mobi-stack-wrap{overflow:visible;padding:0!important}
+.mobi-stack{min-width:0!important;width:100%;display:block}
+.mobi-stack thead{display:none}
+.mobi-stack tbody,.mobi-stack tfoot{display:block;width:100%}
+.mobi-stack tr{display:block;background:#0f0f22;border:1px solid #1a1a32;border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.mobi-stack tfoot tr{background:#0e0e1e;border-color:#2a2a4a}
+.mobi-stack td{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border:none;text-align:right!important;min-width:0}
+.mobi-stack td[data-label]::before{content:attr(data-label);color:#8a8aa5;font-size:10px;text-transform:uppercase;letter-spacing:.5px;font-weight:500;text-align:left;flex-shrink:0}
+.mobi-stack td[colspan]{justify-content:flex-end}
+.mobi-stack td .input,.mobi-stack td .select{width:100%!important;max-width:none!important}
+.mobi-stack td input[type=date]{width:100%!important}
+/* dashboard: 1 coluna em celular pequeno */
+.dash-hero{grid-template-columns:1fr 1fr}
+/* wallet tabs: quebrar em vez de rolar */
+.wallet-tabs{flex-wrap:wrap;overflow-x:visible}
+.wallet-tab{min-width:0;flex:1 1 45%}
+}
+@media(max-width:420px){
+.dash-hero{grid-template-columns:1fr!important}
 }
 
 /* ═══ EVOLUTION CHART ═══ */
@@ -856,20 +882,20 @@ function renderDashboard(cons,totalVal,totalCost,totalPnl,totalPnlP){
 
   var html='';
 
-  // Hero KPI Cards
+  // Hero KPI Cards (todos clicáveis)
   html+='<div class="dash-hero">';
-  html+='<div class="dash-card dash-card-accent"><div class="dc-icon">💎</div><div class="dc-label">Patrimônio Total</div><div class="dc-value">'+fmt$(totalVal)+'</div><div class="dc-sub" style="color:'+(totalPnl>=0?'#00e87e':'#ff4444')+'">'+fmtP(totalPnlP)+' do custo</div></div>';
-  html+='<div class="dash-card"><div class="dc-icon">📈</div><div class="dc-label">P&L Total</div><div class="dc-value" style="color:'+(totalPnl>=0?'#00e87e':'#ff4444')+'">'+fmt$(totalPnl)+'</div><div class="dc-sub" style="color:#6a6a8a">Custo: '+fmt$(totalCost)+'</div></div>';
-  html+='<div class="dash-card"><div class="dc-icon">🏦</div><div class="dc-label">Patrimônio Líquido</div><div class="dc-value">'+fmt$(patrimLiquido)+'</div><div class="dc-sub" style="color:#ff8800">- '+fmt$(emergTotalUSD)+' emergenciais</div></div>';
-  html+='<div class="dash-card"><div class="dc-icon">💰</div><div class="dc-label">Total Aportado</div><div class="dc-value" style="color:#00e87e">'+fmt$(aporteTotalUSD)+'</div><div class="dc-sub" style="color:#6a6a8a">'+fmtBRL(aporteTotalBRL)+'</div></div>';
+  html+='<div class="dash-card dash-card-accent clickable" onclick="goTo(\'consolidated\')"><div class="dc-icon">💎</div><div class="dc-label">Patrimônio Total</div><div class="dc-value">'+fmt$(totalVal)+'</div><div class="dc-sub" style="color:'+(totalPnl>=0?'#00e87e':'#ff4444')+'">'+fmtP(totalPnlP)+' do custo</div></div>';
+  html+='<div class="dash-card clickable" onclick="goTo(\'consolidated\')"><div class="dc-icon">📈</div><div class="dc-label">P&L Total</div><div class="dc-value" style="color:'+(totalPnl>=0?'#00e87e':'#ff4444')+'">'+fmt$(totalPnl)+'</div><div class="dc-sub" style="color:#6a6a8a">Custo: '+fmt$(totalCost)+'</div></div>';
+  html+='<div class="dash-card clickable" onclick="goTo(\'emergencial\')"><div class="dc-icon">🏦</div><div class="dc-label">Patrimônio Líquido</div><div class="dc-value">'+fmt$(patrimLiquido)+'</div><div class="dc-sub" style="color:#ff8800">- '+fmt$(emergTotalUSD)+' emergenciais</div></div>';
+  html+='<div class="dash-card clickable" onclick="goTo(\'aporte\')"><div class="dc-icon">💰</div><div class="dc-label">Total Aportado</div><div class="dc-value" style="color:#00e87e">'+fmt$(aporteTotalUSD)+'</div><div class="dc-sub" style="color:#6a6a8a">'+fmtBRL(aporteTotalBRL)+'</div></div>';
   html+='</div>';
 
-  // ROI + stats row
+  // ROI + stats row (todos clicáveis)
   html+='<div class="dash-hero" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">';
-  html+='<div class="dash-card"><div class="dc-label">ROI Real</div><div class="dc-value" style="color:'+(roiReal>=0?'#00e87e':'#ff4444')+'">'+fmtP(roiReal)+'</div><div class="dc-sub" style="color:#6a6a8a">sobre aportes</div></div>';
-  html+='<div class="dash-card"><div class="dc-label">Carteiras</div><div class="dc-value">'+wallets.length+'</div><div class="dc-sub" style="color:#6a6a8a">'+connected+' conectada'+(connected!==1?'s':'')+'</div></div>';
-  html+='<div class="dash-card"><div class="dc-label">Ativos</div><div class="dc-value">'+uniqueSyms.size+'</div><div class="dc-sub" style="color:#6a6a8a">moedas únicas</div></div>';
-  html+='<div class="dash-card"><div class="dc-label">Emergenciais</div><div class="dc-value" style="color:#ff8800">'+fmt$(emergTotalUSD)+'</div><div class="dc-sub" style="color:#ff8800">'+fmtBRL(emergTotalBRL)+'</div></div>';
+  html+='<div class="dash-card clickable" onclick="goTo(\'consolidated\')"><div class="dc-label">ROI Real</div><div class="dc-value" style="color:'+(roiReal>=0?'#00e87e':'#ff4444')+'">'+fmtP(roiReal)+'</div><div class="dc-sub" style="color:#6a6a8a">sobre aportes</div></div>';
+  html+='<div class="dash-card clickable" onclick="goTo(\'consolidated\')"><div class="dc-label">Carteiras</div><div class="dc-value">'+wallets.length+'</div><div class="dc-sub" style="color:#6a6a8a">'+connected+' conectada'+(connected!==1?'s':'')+'</div></div>';
+  html+='<div class="dash-card clickable" onclick="goTo(\'consolidated\')"><div class="dc-label">Ativos</div><div class="dc-value">'+uniqueSyms.size+'</div><div class="dc-sub" style="color:#6a6a8a">moedas únicas</div></div>';
+  html+='<div class="dash-card clickable" onclick="goTo(\'emergencial\')"><div class="dc-label">Emergenciais</div><div class="dc-value" style="color:#ff8800">'+fmt$(emergTotalUSD)+'</div><div class="dc-sub" style="color:#ff8800">'+fmtBRL(emergTotalBRL)+'</div></div>';
   html+='</div>';
 
   // Section cards (clickable previews)
@@ -1185,7 +1211,7 @@ function renderWallet(wId){
 // Tabela da carteira com botão "Realizar"
 function renderWalletTable(positions,total,wId){
   var sorted=positions.slice().sort(function(a,b){return b.currentValue-a.currentValue});
-  var html='<div class="card" style="padding:0;overflow:auto"><table style="min-width:900px"><thead><tr>';
+  var html='<div class="card mobi-stack-wrap" style="padding:0"><table class="mobi-stack" style="min-width:900px"><thead><tr>';
   ["Ativo","Qtd","P.Médio","P.Atual","24h","Alvo","Valor","P&L",""].forEach(function(h){
     var isTarget=["Alvo"].indexOf(h)>=0;
     html+='<th style="'+(h==='Ativo'?'text-align:left':'')+(isTarget?';color:#ffaa00':'')+'">'+h+'</th>';
@@ -1194,19 +1220,19 @@ function renderWalletTable(positions,total,wId){
   sorted.forEach(function(p,i){
     var c=AC[i%AC.length];
     html+='<tr>';
-    html+='<td style="text-align:left"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+c+';margin-right:6px;vertical-align:middle"></span><span style="font-weight:600;color:#fff">'+p.symbol+'</span></td>';
-    html+='<td>'+p.quantity.toLocaleString("en-US",{maximumFractionDigits:4})+'</td>';
-    html+='<td>'+fmt$(p.avgPrice,p.avgPrice<1?4:2)+'</td>';
-    html+='<td style="font-weight:600;color:#fff">'+fmt$(p.currentPrice,p.currentPrice<1?4:2)+'</td>';
-    html+='<td style="color:'+(p.change24h>=0?'#00e87e':'#ff4444')+'">'+fmtP(p.change24h)+'</td>';
-    html+='<td style="font-weight:600;color:#ffaa00">'+(p.targetPrice?fmt$(p.targetPrice,p.targetPrice<1?4:2):'<span style="color:#3a3a5a">--</span>')+'</td>';
-    html+='<td style="font-weight:600;color:#fff">'+fmt$(p.currentValue)+'</td>';
-    html+='<td><span class="badge '+(p.pnl>=0?'badge-green':'badge-red')+'">'+fmt$(p.pnl)+' ('+fmtP(p.pnlPct)+')</span></td>';
+    html+='<td data-label="Ativo" style="text-align:left"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+c+';margin-right:6px;vertical-align:middle"></span><span style="font-weight:600;color:#fff">'+p.symbol+'</span></td>';
+    html+='<td data-label="Qtd">'+p.quantity.toLocaleString("en-US",{maximumFractionDigits:4})+'</td>';
+    html+='<td data-label="P.Médio">'+fmt$(p.avgPrice,p.avgPrice<1?4:2)+'</td>';
+    html+='<td data-label="P.Atual" style="font-weight:600;color:#fff">'+fmt$(p.currentPrice,p.currentPrice<1?4:2)+'</td>';
+    html+='<td data-label="24h" style="color:'+(p.change24h>=0?'#00e87e':'#ff4444')+'">'+fmtP(p.change24h)+'</td>';
+    html+='<td data-label="Alvo" style="font-weight:600;color:#ffaa00">'+(p.targetPrice?fmt$(p.targetPrice,p.targetPrice<1?4:2):'<span style="color:#3a3a5a">--</span>')+'</td>';
+    html+='<td data-label="Valor" style="font-weight:600;color:#fff">'+fmt$(p.currentValue)+'</td>';
+    html+='<td data-label="P&L"><span class="badge '+(p.pnl>=0?'badge-green':'badge-red')+'">'+fmt$(p.pnl)+' ('+fmtP(p.pnlPct)+')</span></td>';
     html+='<td><button class="real-btn-sell" onclick="showRealizarModal(\''+wId+'\',\''+p.symbol+'\')">Realizar</button></td>';
     html+='</tr>';
   });
   var pnl=total-sorted.reduce(function(s,p){return s+p.costBasis},0);
-  html+='</tbody><tfoot><tr style="border-top:2px solid #2a2a4a;background:#0e0e1e"><td colspan="6" style="font-weight:700;color:#fff;text-align:left">TOTAL</td><td style="font-weight:700;color:#fff;font-size:13px">'+fmt$(total)+'</td><td><span class="badge '+(pnl>=0?'badge-green':'badge-red')+'" style="font-weight:700">'+fmt$(pnl)+'</span></td><td></td></tr></tfoot></table></div>';
+  html+='</tbody><tfoot><tr style="border-top:2px solid #2a2a4a;background:#0e0e1e"><td colspan="6" style="font-weight:700;color:#fff;text-align:left">TOTAL</td><td data-label="Valor" style="font-weight:700;color:#fff;font-size:13px">'+fmt$(total)+'</td><td data-label="P&L"><span class="badge '+(pnl>=0?'badge-green':'badge-red')+'" style="font-weight:700">'+fmt$(pnl)+'</span></td><td></td></tr></tfoot></table></div>';
   return html;
 }
 
@@ -1572,19 +1598,19 @@ function renderEmergencial(){
       html+='<div style="margin-bottom:12px"><input class="input" style="max-width:300px;font-size:13px;color:#fff;background:transparent;border-color:#2a2a4a;padding:4px 8px" value="'+esc(bloco.titulo)+'" onchange="renameEmergBloco(\''+bloco.id+'\',this.value)" placeholder="Nome do bloco"></div>';
 
       if(bloco.itens.length>0){
-        html+='<div style="overflow-x:auto"><table style="min-width:700px">';
+        html+='<div class="mobi-stack-wrap"><table class="mobi-stack" style="min-width:700px">';
         html+='<thead><tr><th style="text-align:left;width:100px">Data</th><th style="text-align:left">Dívida / Descrição</th><th style="width:130px">Valor R$</th><th style="width:130px">Valor $</th><th style="width:40px"></th></tr></thead><tbody>';
         bloco.itens.forEach(function(it){
           html+='<tr>';
-          html+='<td style="text-align:left"><input type="date" class="input" style="width:120px;padding:4px 6px;font-size:12px" value="'+esc(it.data)+'" onchange="updateEmergItem(\''+bloco.id+'\',\''+it.id+'\',\'data\',this.value)"></td>';
-          html+='<td style="text-align:left"><input class="input" style="padding:4px 8px;font-size:13px" value="'+esc(it.descricao)+'" placeholder="Descrição..." onchange="updateEmergItem(\''+bloco.id+'\',\''+it.id+'\',\'descricao\',this.value)"></td>';
-          html+='<td><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#ff8800" step="0.01" value="'+(it.valorBRL||'')+'" onchange="updateEmergItem(\''+bloco.id+'\',\''+it.id+'\',\'valorBRL\',this.value)"></td>';
-          html+='<td><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#ff8800;background:#0a0a14" step="0.01" value="'+(it.valorUSD||'')+'" onchange="updateEmergItem(\''+bloco.id+'\',\''+it.id+'\',\'valorUSD\',this.value)"></td>';
+          html+='<td data-label="Data" style="text-align:left"><input type="date" class="input" style="width:120px;padding:4px 6px;font-size:12px" value="'+esc(it.data)+'" onchange="updateEmergItem(\''+bloco.id+'\',\''+it.id+'\',\'data\',this.value)"></td>';
+          html+='<td data-label="Descrição" style="text-align:left"><input class="input" style="padding:4px 8px;font-size:13px" value="'+esc(it.descricao)+'" placeholder="Descrição..." onchange="updateEmergItem(\''+bloco.id+'\',\''+it.id+'\',\'descricao\',this.value)"></td>';
+          html+='<td data-label="Valor R$"><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#ff8800" step="0.01" value="'+(it.valorBRL||'')+'" onchange="updateEmergItem(\''+bloco.id+'\',\''+it.id+'\',\'valorBRL\',this.value)"></td>';
+          html+='<td data-label="Valor $"><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#ff8800;background:#0a0a14" step="0.01" value="'+(it.valorUSD||'')+'" onchange="updateEmergItem(\''+bloco.id+'\',\''+it.id+'\',\'valorUSD\',this.value)"></td>';
           html+='<td><button class="btn btn-red" style="padding:2px 8px;font-size:11px" onclick="removeEmergItem(\''+bloco.id+'\',\''+it.id+'\')">×</button></td></tr>';
         });
         html+='<tr style="border-top:2px solid #ff880044"><td colspan="2" style="text-align:right;font-weight:700;color:#ff8800;font-size:13px">TOTAL DO BLOCO</td>';
-        html+='<td style="font-weight:700;color:#ff8800;font-size:14px;background:#ff880011">'+fmtBRL(blocoBRL)+'</td>';
-        html+='<td style="font-weight:700;color:#ff8800;font-size:14px;background:#ff880011">'+fmt$(blocoUSD)+'</td><td></td></tr>';
+        html+='<td data-label="Total R$" style="font-weight:700;color:#ff8800;font-size:14px;background:#ff880011">'+fmtBRL(blocoBRL)+'</td>';
+        html+='<td data-label="Total $" style="font-weight:700;color:#ff8800;font-size:14px;background:#ff880011">'+fmt$(blocoUSD)+'</td><td></td></tr>';
         html+='</tbody></table></div>';
       }else{html+='<div style="text-align:center;padding:20px;color:#6a6a8a;font-size:13px">Bloco vazio. Clique em "+ Item" para adicionar.</div>';}
     }
@@ -1686,29 +1712,29 @@ function renderAporte(){
       html+='<div style="margin-bottom:12px"><input class="input" style="max-width:280px;font-size:13px;color:#fff;background:transparent;border-color:#2a2a4a;padding:4px 8px" value="'+esc(bloco.titulo)+'" onchange="renameAporteBloco(\''+bloco.id+'\',this.value)" placeholder="Nome do bloco"></div>';
 
       if(bloco.itens.length>0){
-        html+='<div style="overflow-x:auto"><table style="min-width:850px">';
+        html+='<div class="mobi-stack-wrap"><table class="mobi-stack" style="min-width:850px">';
         html+='<thead><tr><th style="text-align:left;width:100px">Data</th><th style="text-align:left;width:80px">Moeda</th><th style="width:110px">Quantidade</th><th style="width:110px">PM (R$/un)</th><th style="width:120px">Total R$</th><th style="width:110px">Total $</th><th style="text-align:left;width:70px">Via</th><th style="text-align:left">Obs</th><th style="width:30px"></th></tr></thead><tbody>';
         bloco.itens.forEach(function(it){
           html+='<tr>';
-          html+='<td style="text-align:left"><input type="date" class="input" style="width:120px;padding:4px 6px;font-size:12px" value="'+esc(it.data)+'" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'data\',this.value)"></td>';
-          html+='<td style="text-align:left"><select class="select" style="width:80px;padding:4px 6px;font-size:12px" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'moeda\',this.value)">';
+          html+='<td data-label="Data" style="text-align:left"><input type="date" class="input" style="width:120px;padding:4px 6px;font-size:12px" value="'+esc(it.data)+'" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'data\',this.value)"></td>';
+          html+='<td data-label="Moeda" style="text-align:left"><select class="select" style="width:80px;padding:4px 6px;font-size:12px" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'moeda\',this.value)">';
           ["USDT","USDC","DAI","FDUSD","BTC","ETH","BNB"].forEach(function(m){html+='<option value="'+m+'"'+(it.moeda===m?' selected':'')+'>'+m+'</option>';});
           html+='</select></td>';
-          html+='<td><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#00e87e" step="0.01" value="'+(it.quantidade||'')+'" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'quantidade\',this.value)"></td>';
-          html+='<td><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#ffaa00" step="0.0001" value="'+(it.precoMedio||'')+'" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'precoMedio\',this.value)"></td>';
-          html+='<td><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#ff8800" step="0.01" value="'+(it.valorBRL||'')+'" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'valorBRL\',this.value)"></td>';
-          html+='<td><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#00e87e" step="0.01" value="'+(it.valorUSD||'')+'" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'valorUSD\',this.value)"></td>';
-          html+='<td style="text-align:left"><select class="select" style="width:70px;padding:4px 6px;font-size:11px" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'via\',this.value)">';
+          html+='<td data-label="Quantidade"><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#00e87e" step="0.01" value="'+(it.quantidade||'')+'" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'quantidade\',this.value)"></td>';
+          html+='<td data-label="PM R$/un"><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#ffaa00" step="0.0001" value="'+(it.precoMedio||'')+'" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'precoMedio\',this.value)"></td>';
+          html+='<td data-label="Total R$"><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#ff8800" step="0.01" value="'+(it.valorBRL||'')+'" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'valorBRL\',this.value)"></td>';
+          html+='<td data-label="Total $"><input type="number" class="input" style="text-align:right;padding:4px 8px;font-size:13px;color:#00e87e" step="0.01" value="'+(it.valorUSD||'')+'" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'valorUSD\',this.value)"></td>';
+          html+='<td data-label="Via" style="text-align:left"><select class="select" style="width:70px;padding:4px 6px;font-size:11px" onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'via\',this.value)">';
           ["PIX","TED","P2P","Cartão","Outro"].forEach(function(v){html+='<option value="'+v+'"'+(it.via===v?' selected':'')+'>'+v+'</option>';});
           html+='</select></td>';
-          html+='<td style="text-align:left"><input class="input" style="padding:4px 8px;font-size:12px" value="'+esc(it.obs)+'" placeholder="..." onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'obs\',this.value)"></td>';
+          html+='<td data-label="Obs" style="text-align:left"><input class="input" style="padding:4px 8px;font-size:12px" value="'+esc(it.obs)+'" placeholder="..." onchange="updateAporteItem(\''+bloco.id+'\',\''+it.id+'\',\'obs\',this.value)"></td>';
           html+='<td><button class="btn btn-red" style="padding:2px 8px;font-size:11px" onclick="removeAporteItem(\''+bloco.id+'\',\''+it.id+'\')">×</button></td></tr>';
         });
         html+='<tr style="border-top:2px solid #00e87e44"><td colspan="2" style="text-align:right;font-weight:700;color:#00e87e;font-size:12px">TOTAL</td>';
-        html+='<td style="font-weight:700;color:#00e87e;font-size:13px;background:#00e87e11">'+blocoQty.toFixed(2)+'</td>';
-        html+='<td style="font-weight:700;color:#ffaa00;font-size:13px;background:#ffaa0011">'+fmtBRL(blocoPM)+'</td>';
-        html+='<td style="font-weight:700;color:#ff8800;font-size:13px;background:#ff880011">'+fmtBRL(blocoBRL)+'</td>';
-        html+='<td style="font-weight:700;color:#00e87e;font-size:13px;background:#00e87e11">'+fmt$(blocoUSD)+'</td>';
+        html+='<td data-label="Qtd total" style="font-weight:700;color:#00e87e;font-size:13px;background:#00e87e11">'+blocoQty.toFixed(2)+'</td>';
+        html+='<td data-label="PM médio" style="font-weight:700;color:#ffaa00;font-size:13px;background:#ffaa0011">'+fmtBRL(blocoPM)+'</td>';
+        html+='<td data-label="Total R$" style="font-weight:700;color:#ff8800;font-size:13px;background:#ff880011">'+fmtBRL(blocoBRL)+'</td>';
+        html+='<td data-label="Total $" style="font-weight:700;color:#00e87e;font-size:13px;background:#00e87e11">'+fmt$(blocoUSD)+'</td>';
         html+='<td colspan="3"></td></tr></tbody></table></div>';
       }else{html+='<div style="text-align:center;padding:20px;color:#6a6a8a;font-size:13px">Bloco vazio. Clique em "+ Aporte" para registrar.</div>';}
     }
@@ -2387,7 +2413,7 @@ if(localStorage.getItem('fc_notif')==='1'&&'Notification' in window&&Notificatio
 }
 
 /* ═══ SUPABASE AUTH + DATABASE ═══ */
-var FC_VERSION="2.1.0";
+var FC_VERSION="2.2.0";
 var SUPABASE_URL="https://oavfbsrlweujzhcwkpzy.supabase.co";
 var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hdmZic3Jsd2V1anpoY3drcHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTcxMzIsImV4cCI6MjA5MjA5MzEzMn0.YsCBRPP4BxD0jvCSyd4k3OgIGRczhv3pA5scvWqsQM8";
 
