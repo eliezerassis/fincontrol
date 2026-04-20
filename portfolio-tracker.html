@@ -90,6 +90,39 @@ body{background:#0a0a14;color:#e0e0e0;font-family:'Segoe UI','Inter',sans-serif;
 .dash-card .dc-sub{font-size:12px;margin-top:4px}
 .dash-card-accent{border-color:#7b61ff44;background:linear-gradient(135deg,#1a1a3e,#201a4a)}
 
+/* Hero principal (número heroico) */
+.dash-hero-main{background:linear-gradient(135deg,#1a1a3e,#221a4a);border:1px solid #7b61ff44;border-radius:18px;padding:28px 32px;margin-bottom:14px;position:relative;overflow:hidden;cursor:pointer;transition:all .25s}
+.dash-hero-main:hover{border-color:#7b61ff88;box-shadow:0 12px 40px rgba(123,97,255,0.15)}
+.dash-hero-main .dhm-label{font-size:11px;color:#9c8fff;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.dash-hero-main .dhm-value{font-size:42px;font-weight:800;color:#fff;line-height:1.05;letter-spacing:-1px}
+.dash-hero-main .dhm-meta{display:flex;gap:18px;margin-top:12px;flex-wrap:wrap;font-size:13px}
+.dash-hero-main .dhm-meta .dhm-item{display:flex;flex-direction:column;gap:2px}
+.dash-hero-main .dhm-meta .dhm-k{font-size:10px;color:#7c7a95;text-transform:uppercase;letter-spacing:.5px}
+.dash-hero-main .dhm-meta .dhm-v{font-size:13px;font-weight:600}
+@media(max-width:768px){
+.dash-hero-main{padding:20px 18px}
+.dash-hero-main .dhm-value{font-size:32px}
+.dash-hero-main .dhm-meta{gap:12px}
+}
+
+/* Barra de ações principal */
+.dash-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:18px}
+.dash-action{background:#12122a;border:1px solid #2a2a4a;border-radius:12px;padding:14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .2s;font-weight:600;color:#c0c0d0;font-size:13px}
+.dash-action:hover{border-color:#7b61ff;color:#fff;background:#7b61ff11;transform:translateY(-1px)}
+.dash-action .da-icon{font-size:18px}
+@media(max-width:480px){
+.dash-actions{grid-template-columns:1fr 1fr;gap:6px}
+.dash-action{padding:11px 12px;font-size:12px}
+}
+
+/* Stats compactos */
+.dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.dash-stat{background:#12122a;border:1px solid #1f1f35;border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .2s}
+.dash-stat:hover{border-color:#7b61ff55;transform:translateY(-1px)}
+.dash-stat .ds-k{font-size:10px;color:#6a6a8a;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px}
+.dash-stat .ds-v{font-size:18px;font-weight:700;color:#fff;line-height:1.1}
+.dash-stat .ds-s{font-size:11px;color:#6a6a8a;margin-top:2px}
+
 .dash-sections{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-bottom:20px}
 .dash-section{background:#12122a;border:1px solid #1f1f35;border-radius:14px;padding:20px 22px;cursor:pointer;transition:all .25s}
 .dash-section:hover{border-color:#7b61ff55;transform:translateY(-2px);box-shadow:0 8px 30px rgba(123,97,255,0.08)}
@@ -878,79 +911,53 @@ function renderDashboard(cons,totalVal,totalCost,totalPnl,totalPnlP){
   var patrimLiquido=totalVal-emergTotalUSD;
   var roiReal=aporteTotalUSD>0?((totalVal-aporteTotalUSD)/aporteTotalUSD)*100:totalPnlP;
   var uniqueSyms=new Set();wallets.forEach(function(w){w.positions.forEach(function(p){uniqueSyms.add(p.symbol)})});
-  var connected=wallets.filter(function(w){return w.connection}).length;
+  var pnlColor=totalPnl>=0?'#00e87e':'#ff4444';
 
   var html='';
 
-  // Hero KPI Cards (todos clicáveis)
-  html+='<div class="dash-hero">';
-  html+='<div class="dash-card dash-card-accent clickable" onclick="goTo(\'consolidated\')"><div class="dc-icon">💎</div><div class="dc-label">Patrimônio Total</div><div class="dc-value">'+fmt$(totalVal)+'</div><div class="dc-sub" style="color:'+(totalPnl>=0?'#00e87e':'#ff4444')+'">'+fmtP(totalPnlP)+' do custo</div></div>';
-  html+='<div class="dash-card clickable" onclick="goTo(\'consolidated\')"><div class="dc-icon">📈</div><div class="dc-label">P&L Total</div><div class="dc-value" style="color:'+(totalPnl>=0?'#00e87e':'#ff4444')+'">'+fmt$(totalPnl)+'</div><div class="dc-sub" style="color:#6a6a8a">Custo: '+fmt$(totalCost)+'</div></div>';
-  html+='<div class="dash-card clickable" onclick="goTo(\'emergencial\')"><div class="dc-icon">🏦</div><div class="dc-label">Patrimônio Líquido</div><div class="dc-value">'+fmt$(patrimLiquido)+'</div><div class="dc-sub" style="color:#ff8800">- '+fmt$(emergTotalUSD)+' emergenciais</div></div>';
-  html+='<div class="dash-card clickable" onclick="goTo(\'aporte\')"><div class="dc-icon">💰</div><div class="dc-label">Total Aportado</div><div class="dc-value" style="color:#00e87e">'+fmt$(aporteTotalUSD)+'</div><div class="dc-sub" style="color:#6a6a8a">'+fmtBRL(aporteTotalBRL)+'</div></div>';
+  // ── HERO: número heroico ──
+  html+='<div class="dash-hero-main" onclick="goTo(\'consolidated\')">';
+  html+='<div class="dhm-label">Patrimônio Total</div>';
+  html+='<div class="dhm-value">'+fmt$(totalVal)+'</div>';
+  html+='<div class="dhm-meta">';
+  html+='<div class="dhm-item"><span class="dhm-k">P&L</span><span class="dhm-v" style="color:'+pnlColor+'">'+fmt$(totalPnl)+' ('+fmtP(totalPnlP)+')</span></div>';
+  html+='<div class="dhm-item"><span class="dhm-k">ROI s/ Aportes</span><span class="dhm-v" style="color:'+(roiReal>=0?'#00e87e':'#ff4444')+'">'+fmtP(roiReal)+'</span></div>';
+  html+='<div class="dhm-item"><span class="dhm-k">USD/BRL</span><span class="dhm-v" style="color:#00aae4">'+fmtBRL(cotacaoUSD)+'</span></div>';
+  html+='</div></div>';
+
+  // ── AÇÕES (barra no topo, não no rodapé) ──
+  html+='<div class="dash-actions">';
+  html+='<div class="dash-action" onclick="goTo(\'aporte\');setTimeout(addAporteBloco,100)" style="border-color:#00e87e55;color:#00e87e"><span class="da-icon">＋</span> Novo Aporte</div>';
+  html+='<div class="dash-action" onclick="goTo(\'emergencial\');setTimeout(addEmergBloco,100)" style="border-color:#ff880055;color:#ff8800"><span class="da-icon">🚨</span> Emergencial</div>';
+  html+='<div class="dash-action" onclick="showNewWalletModal()"><span class="da-icon">💼</span> Nova Carteira</div>';
+  html+='<div class="dash-action" onclick="exportPortfolio()"><span class="da-icon">💾</span> Backup</div>';
   html+='</div>';
 
-  // ROI + stats row (todos clicáveis)
-  html+='<div class="dash-hero" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">';
-  html+='<div class="dash-card clickable" onclick="goTo(\'consolidated\')"><div class="dc-label">ROI Real</div><div class="dc-value" style="color:'+(roiReal>=0?'#00e87e':'#ff4444')+'">'+fmtP(roiReal)+'</div><div class="dc-sub" style="color:#6a6a8a">sobre aportes</div></div>';
-  html+='<div class="dash-card clickable" onclick="goTo(\'consolidated\')"><div class="dc-label">Carteiras</div><div class="dc-value">'+wallets.length+'</div><div class="dc-sub" style="color:#6a6a8a">'+connected+' conectada'+(connected!==1?'s':'')+'</div></div>';
-  html+='<div class="dash-card clickable" onclick="goTo(\'consolidated\')"><div class="dc-label">Ativos</div><div class="dc-value">'+uniqueSyms.size+'</div><div class="dc-sub" style="color:#6a6a8a">moedas únicas</div></div>';
-  html+='<div class="dash-card clickable" onclick="goTo(\'emergencial\')"><div class="dc-label">Emergenciais</div><div class="dc-value" style="color:#ff8800">'+fmt$(emergTotalUSD)+'</div><div class="dc-sub" style="color:#ff8800">'+fmtBRL(emergTotalBRL)+'</div></div>';
+  // ── 3 STATS COMPACTOS ──
+  html+='<div class="dash-stats">';
+  html+='<div class="dash-stat" onclick="goTo(\'aporte\')"><div class="ds-k">💰 Aportado</div><div class="ds-v" style="color:#00e87e">'+fmt$(aporteTotalUSD)+'</div><div class="ds-s">'+fmtBRL(aporteTotalBRL)+'</div></div>';
+  html+='<div class="dash-stat" onclick="goTo(\'emergencial\')"><div class="ds-k">🏦 Líquido (após emerg.)</div><div class="ds-v">'+fmt$(patrimLiquido)+'</div><div class="ds-s" style="color:#ff8800">- '+fmt$(emergTotalUSD)+'</div></div>';
+  html+='<div class="dash-stat" onclick="goTo(\'consolidated\')"><div class="ds-k">💼 Carteira</div><div class="ds-v">'+uniqueSyms.size+' ativos</div><div class="ds-s">em '+wallets.length+' carteira'+(wallets.length!==1?'s':'')+'</div></div>';
   html+='</div>';
 
-  // Section cards (clickable previews)
+  // ── SEÇÕES (previews clicáveis) ──
   html+='<div class="dash-sections">';
 
-  // Carteiras preview
+  // Top ativos (funde "Carteiras" + "Por Carteira" em um único preview útil)
   html+='<div class="dash-section" onclick="goTo(\'consolidated\')">';
-  html+='<div class="ds-header"><div class="ds-title">💼 Carteiras</div><div class="ds-arrow">→</div></div>';
-  html+='<table class="dash-mini-table">';
+  html+='<div class="ds-header"><div class="ds-title">💎 Top Ativos</div><div class="ds-arrow">→</div></div>';
   var topAssets=cons.filter(function(p){return p.currentValue>1}).sort(function(a,b){return b.currentValue-a.currentValue}).slice(0,5);
-  topAssets.forEach(function(p){
-    var pct=totalVal>0?(p.currentValue/totalVal*100):0;
-    html+='<tr><td style="color:#fff;font-weight:600">'+p.symbol+'</td><td style="color:#6a6a8a">'+pct.toFixed(1)+'%</td><td style="font-weight:600;color:#fff">'+fmt$(p.currentValue)+'</td></tr>';
-  });
-  if(cons.length>5)html+='<tr><td colspan="3" style="color:#5a5a7a;font-size:11px;text-align:center">+'+(cons.length-5)+' mais...</td></tr>';
-  html+='</table></div>';
-
-  // Wallets preview
-  html+='<div class="dash-section" onclick="goTo(\'consolidated\')">';
-  html+='<div class="ds-header"><div class="ds-title">🏛 Por Carteira</div><div class="ds-arrow">→</div></div>';
-  html+='<table class="dash-mini-table">';
-  wallets.forEach(function(w,i){
-    var ws=getWalletStats(w.id);
-    var ti=WTYPES.find(function(t){return t.v===w.type})||WTYPES[0];
-    html+='<tr><td style="color:#fff">'+ti.i+' '+esc(w.name)+'</td><td style="color:'+(ws.pnl>=0?'#00e87e':'#ff4444')+'">'+fmtP(ws.pnlPct)+'</td><td style="font-weight:600;color:#fff">'+fmt$(ws.total)+'</td></tr>';
-  });
-  html+='</table></div>';
-
-  // Emergenciais preview
-  html+='<div class="dash-section" onclick="goTo(\'emergencial\')" style="border-color:#ff880022">';
-  html+='<div class="ds-header"><div class="ds-title" style="color:#ff8800">🚨 Emergenciais</div><div class="ds-arrow">→</div></div>';
-  if(emergBlocos.length>0){
+  if(topAssets.length>0){
     html+='<table class="dash-mini-table">';
-    emergBlocos.slice(-3).forEach(function(b){
-      var bUSD=0;b.itens.forEach(function(it){bUSD+=it.valorUSD||0});
-      html+='<tr><td style="color:#fff">'+esc(b.titulo)+'</td><td style="color:#6a6a8a">'+b.itens.length+' itens</td><td style="font-weight:600;color:#ff8800">'+fmt$(bUSD)+'</td></tr>';
+    topAssets.forEach(function(p){
+      var pct=totalVal>0?(p.currentValue/totalVal*100):0;
+      var ch24=p.change24h!=null?p.change24h:0;
+      html+='<tr><td style="color:#fff;font-weight:600">'+p.symbol+'</td><td style="color:#6a6a8a">'+pct.toFixed(1)+'%</td><td style="color:'+(ch24>=0?'#00e87e':'#ff4444')+'">'+fmtP(ch24)+'</td><td style="font-weight:600;color:#fff">'+fmt$(p.currentValue)+'</td></tr>';
     });
+    if(cons.length>5)html+='<tr><td colspan="4" style="color:#5a5a7a;font-size:11px;text-align:center">+'+(cons.length-5)+' mais...</td></tr>';
     html+='</table>';
   }else{
-    html+='<div style="color:#5a5a7a;font-size:12px;padding:10px 0">Nenhum registro</div>';
-  }
-  html+='</div>';
-
-  // Aportes preview
-  html+='<div class="dash-section" onclick="goTo(\'aporte\')" style="border-color:#00e87e22">';
-  html+='<div class="ds-header"><div class="ds-title" style="color:#00e87e">💰 Aportes</div><div class="ds-arrow">→</div></div>';
-  if(aporteBlocos.length>0){
-    html+='<table class="dash-mini-table">';
-    aporteBlocos.slice(-3).reverse().forEach(function(b){
-      var bUSD=0;b.itens.forEach(function(it){bUSD+=it.valorUSD||0});
-      html+='<tr><td style="color:#fff">'+esc(b.titulo)+'</td><td style="color:#6a6a8a">'+b.itens.length+' itens</td><td style="font-weight:600;color:#00e87e">'+fmt$(bUSD)+'</td></tr>';
-    });
-    html+='</table>';
-  }else{
-    html+='<div style="color:#5a5a7a;font-size:12px;padding:10px 0">Nenhum aporte registrado</div>';
+    html+='<div style="color:#5a5a7a;font-size:12px;padding:10px 0">Nenhum ativo ainda</div>';
   }
   html+='</div>';
 
@@ -976,15 +983,30 @@ function renderDashboard(cons,totalVal,totalCost,totalPnl,totalPnlP){
   }
   html+='</div>';
 
-  html+='</div>';
+  // Emergenciais preview (só aparece se existir algo)
+  if(emergBlocos.length>0){
+    html+='<div class="dash-section" onclick="goTo(\'emergencial\')" style="border-color:#ff880022">';
+    html+='<div class="ds-header"><div class="ds-title" style="color:#ff8800">🚨 Emergenciais</div><div class="ds-arrow">→</div></div>';
+    html+='<table class="dash-mini-table">';
+    emergBlocos.slice(-3).forEach(function(b){
+      var bUSD=0;b.itens.forEach(function(it){bUSD+=it.valorUSD||0});
+      html+='<tr><td style="color:#fff">'+esc(b.titulo)+'</td><td style="color:#6a6a8a">'+b.itens.length+' itens</td><td style="font-weight:600;color:#ff8800">'+fmt$(bUSD)+'</td></tr>';
+    });
+    html+='</table></div>';
+  }
 
-  // Quick shortcuts
-  html+='<div class="dash-shortcuts">';
-  html+='<div class="shortcut-btn" onclick="showNewWalletModal()"><span class="sc-icon">＋</span> Nova Carteira</div>';
-  html+='<div class="shortcut-btn" onclick="goTo(\'aporte\');setTimeout(addAporteBloco,100)"><span class="sc-icon">💵</span> Novo Aporte</div>';
-  html+='<div class="shortcut-btn" onclick="goTo(\'emergencial\');setTimeout(addEmergBloco,100)"><span class="sc-icon">🚨</span> Registrar Emergencial</div>';
-  html+='<div class="shortcut-btn" onclick="toggleConnections()"><span class="sc-icon">⚡</span> Conexões</div>';
-  html+='<div class="shortcut-btn" onclick="exportPortfolio()"><span class="sc-icon">💾</span> Backup</div>';
+  // Aportes preview (só aparece se existir algo)
+  if(aporteBlocos.length>0){
+    html+='<div class="dash-section" onclick="goTo(\'aporte\')" style="border-color:#00e87e22">';
+    html+='<div class="ds-header"><div class="ds-title" style="color:#00e87e">💰 Aportes recentes</div><div class="ds-arrow">→</div></div>';
+    html+='<table class="dash-mini-table">';
+    aporteBlocos.slice(-3).reverse().forEach(function(b){
+      var bUSD=0;b.itens.forEach(function(it){bUSD+=it.valorUSD||0});
+      html+='<tr><td style="color:#fff">'+esc(b.titulo)+'</td><td style="color:#6a6a8a">'+b.itens.length+' itens</td><td style="font-weight:600;color:#00e87e">'+fmt$(bUSD)+'</td></tr>';
+    });
+    html+='</table></div>';
+  }
+
   html+='</div>';
 
   document.getElementById("mainContent").innerHTML=html;
@@ -1541,9 +1563,11 @@ function updateEmergItem(bId,iId,field,val){
     if(it.id===iId){
       if(field==="valorBRL"||field==="valorUSD")it[field]=parseFloat(val)||0;
       else it[field]=val;
-      // Auto-converter BRL→USD quando preencher valor em R$
-      if(field==="valorBRL"&&it.valorBRL>0&&cotacaoUSD>0){
+      // Auto-conversão bidirecional R$ ↔ $ via cotação
+      if(field==="valorBRL"&&cotacaoUSD>0){
         it.valorUSD=Math.round(it.valorBRL/cotacaoUSD*100)/100;
+      }else if(field==="valorUSD"&&cotacaoUSD>0){
+        it.valorBRL=Math.round(it.valorUSD*cotacaoUSD*100)/100;
       }
     }
   })});
@@ -1649,12 +1673,16 @@ function updateAporteItem(bId,iId,field,val){
     if(it.id===iId){
       if(field==="quantidade"||field==="precoMedio"||field==="valorBRL"||field==="valorUSD")it[field]=parseFloat(val)||0;
       else it[field]=val;
-      // Auto-calc: precoMedio é em BRL (quanto pagou em reais por unidade)
-      // valorBRL = quantidade × precoMedio
-      // valorUSD = valorBRL / cotação USD/BRL
+      // Auto-cálculo bidirecional entre quantidade × PM = valorBRL ; valorBRL/cotação = valorUSD
       if(field==="quantidade"||field==="precoMedio"){
-        it.valorBRL=it.quantidade*(it.precoMedio||0);
+        it.valorBRL=Math.round((it.quantidade||0)*(it.precoMedio||0)*100)/100;
         if(it.valorBRL>0&&cotacaoUSD>0)it.valorUSD=Math.round(it.valorBRL/cotacaoUSD*100)/100;
+      }else if(field==="valorBRL"){
+        if(cotacaoUSD>0)it.valorUSD=Math.round(it.valorBRL/cotacaoUSD*100)/100;
+        if(it.quantidade>0)it.precoMedio=Math.round(it.valorBRL/it.quantidade*10000)/10000;
+      }else if(field==="valorUSD"){
+        if(cotacaoUSD>0)it.valorBRL=Math.round(it.valorUSD*cotacaoUSD*100)/100;
+        if(it.quantidade>0&&it.valorBRL>0)it.precoMedio=Math.round(it.valorBRL/it.quantidade*10000)/10000;
       }
     }
   })});
@@ -2413,7 +2441,7 @@ if(localStorage.getItem('fc_notif')==='1'&&'Notification' in window&&Notificatio
 }
 
 /* ═══ SUPABASE AUTH + DATABASE ═══ */
-var FC_VERSION="2.2.0";
+var FC_VERSION="2.3.0";
 var SUPABASE_URL="https://oavfbsrlweujzhcwkpzy.supabase.co";
 var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hdmZic3Jsd2V1anpoY3drcHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTcxMzIsImV4cCI6MjA5MjA5MzEzMn0.YsCBRPP4BxD0jvCSyd4k3OgIGRczhv3pA5scvWqsQM8";
 
