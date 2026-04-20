@@ -532,7 +532,7 @@ function loadState(){
     {symbol:"MX",quantity:28.171,avgPrice:1.77,targetPrice:null}
   ],connection:null,syncStatus:null,defiPositions:[]}];
 }
-function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(wallets));}catch(e){} debouncedSync()}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(wallets));}catch(e){} debouncedSync("wallets")}
 wallets=loadState();
 
 function loadEmerg(){
@@ -553,14 +553,14 @@ function loadEmerg(){
     ]
   }];
 }
-function saveEmerg(){try{localStorage.setItem(EMERG_KEY,JSON.stringify(emergBlocos));}catch(e){} debouncedSync()}
+function saveEmerg(){try{localStorage.setItem(EMERG_KEY,JSON.stringify(emergBlocos));}catch(e){} debouncedSync("emergenciais")}
 emergBlocos=loadEmerg();
 
 function loadAporte(){
   try{var d=localStorage.getItem(APORTE_KEY);if(d)return JSON.parse(d);}catch(e){}
   return[];
 }
-function saveAporte(){try{localStorage.setItem(APORTE_KEY,JSON.stringify(aporteBlocos));}catch(e){} debouncedSync()}
+function saveAporte(){try{localStorage.setItem(APORTE_KEY,JSON.stringify(aporteBlocos));}catch(e){} debouncedSync("aportes")}
 aporteBlocos=loadAporte();
 
 /* ═══ ORÇAMENTO STATE ═══ */
@@ -571,7 +571,7 @@ let orcMes,orcAno;
 
 function orcKey(m,a){return a+"-"+String(m).padStart(2,"0")}
 function loadOrc(){try{var d=localStorage.getItem(ORC_KEY);if(d)return JSON.parse(d);}catch(e){}return{}}
-function saveOrc(){try{localStorage.setItem(ORC_KEY,JSON.stringify(orcData));}catch(e){} debouncedSync()}
+function saveOrc(){try{localStorage.setItem(ORC_KEY,JSON.stringify(orcData));}catch(e){} debouncedSync("orcamento")}
 orcData=loadOrc();
 
 function migrateOrcEntry(entry){
@@ -598,14 +598,25 @@ var META_LP_KEY="fincontrol_metalp_v1";
 var parcelas=[];var metasLP=[];
 try{var _p=localStorage.getItem(PARC_KEY);if(_p)parcelas=JSON.parse(_p);}catch(e){}
 try{var _ml=localStorage.getItem(META_LP_KEY);if(_ml)metasLP=JSON.parse(_ml);}catch(e){}
-function saveParc(){try{localStorage.setItem(PARC_KEY,JSON.stringify(parcelas));}catch(e){} debouncedSync()}
-function saveMetaLP(){try{localStorage.setItem(META_LP_KEY,JSON.stringify(metasLP));}catch(e){} debouncedSync()}
+function saveParc(){try{localStorage.setItem(PARC_KEY,JSON.stringify(parcelas));}catch(e){} debouncedSync("parcelas")}
+function saveMetaLP(){try{localStorage.setItem(META_LP_KEY,JSON.stringify(metasLP));}catch(e){} debouncedSync("metas_lp")}
 
-// Debounced sync — espera 5s após última mudança para sincronizar
+// Rastreio de mtime/synced por chave, para evitar que o pull apague alterações locais não sincronizadas
+function markModified(key){try{localStorage.setItem("fc_mtime_"+key,String(Date.now()))}catch(e){}}
+function getMtime(key){try{var v=localStorage.getItem("fc_mtime_"+key);return v?parseInt(v,10)||0:0}catch(e){return 0}}
+function markSynced(key,ts){try{localStorage.setItem("fc_synced_"+key,String(ts||Date.now()))}catch(e){}}
+function getSynced(key){try{var v=localStorage.getItem("fc_synced_"+key);return v?parseInt(v,10)||0:0}catch(e){return 0}}
+
+// Debounced sync — espera 2s após última mudança para sincronizar
 var _debounceSyncTimer=null;
-function debouncedSync(){
+function debouncedSync(key){
+  if(key)markModified(key);
   if(_debounceSyncTimer)clearTimeout(_debounceSyncTimer);
-  _debounceSyncTimer=setTimeout(function(){syncToCloud()},5000);
+  _debounceSyncTimer=setTimeout(function(){_debounceSyncTimer=null;syncToCloud()},2000);
+}
+function flushSync(){
+  if(_debounceSyncTimer){clearTimeout(_debounceSyncTimer);_debounceSyncTimer=null}
+  return syncToCloud();
 }
 function getOrcMes(m,a){
   var k=orcKey(m,a);
@@ -2376,7 +2387,7 @@ if(localStorage.getItem('fc_notif')==='1'&&'Notification' in window&&Notificatio
 }
 
 /* ═══ SUPABASE AUTH + DATABASE ═══ */
-var FC_VERSION="2.0.0";
+var FC_VERSION="2.1.0";
 var SUPABASE_URL="https://oavfbsrlweujzhcwkpzy.supabase.co";
 var SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hdmZic3Jsd2V1anpoY3drcHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTcxMzIsImV4cCI6MjA5MjA5MzEzMn0.YsCBRPP4BxD0jvCSyd4k3OgIGRczhv3pA5scvWqsQM8";
 
@@ -2498,17 +2509,27 @@ async function authLogout(){
 }
 
 // ── SYNC: Cloud → Local ──
+// Se o localStorage tem alterações mais recentes que o último sync bem-sucedido para aquela chave,
+// não sobrescreve (preserva o que o usuário acabou de editar); essa chave será reenviada no próximo push.
 async function syncFromCloud(){
   if(!currentUser||!sb)return;
   try{
     var res=await sb.from("user_data").select("data_key,data_value,version,updated_at").eq("user_id",currentUser.id);
     if(res.error){console.warn("[Sync] Read error:",res.error.message);return}
     if(!res.data||res.data.length===0){console.log("[Sync] No cloud data yet");return}
+    var applied=0,skipped=0,pendingPush=false;
     res.data.forEach(function(row){
       var sk=SYNC_KEYS.find(function(s){return s.key===row.data_key});
-      if(sk&&row.data_value!=null){sk.setLocal(row.data_value)}
+      if(!sk||row.data_value==null)return;
+      var mtime=getMtime(row.data_key),synced=getSynced(row.data_key);
+      if(mtime>synced){skipped++;pendingPush=true;console.log("[Sync] Keeping local (unsynced changes) for",row.data_key);return}
+      sk.setLocal(row.data_value);
+      var cloudTs=row.updated_at?new Date(row.updated_at).getTime():Date.now();
+      markSynced(row.data_key,cloudTs);
+      applied++;
     });
-    console.log("[Sync] Loaded "+res.data.length+" keys from cloud");
+    console.log("[Sync] Cloud→Local applied="+applied+" skipped="+skipped);
+    if(pendingPush)debouncedSync();
   }catch(e){console.warn("[Sync] syncFromCloud error:",e.message)}
 }
 
@@ -2516,13 +2537,16 @@ async function syncFromCloud(){
 async function syncToCloud(){
   if(!currentUser||!sb)return;
   try{
-    var promises=SYNC_KEYS.map(function(sk){
-      var val=sk.getLocal();
+    var snapshot=SYNC_KEYS.map(function(sk){return{key:sk.key,val:sk.getLocal(),mtime:getMtime(sk.key)}});
+    var promises=snapshot.map(function(it){
       return sb.from("user_data").upsert({
         user_id:currentUser.id,
-        data_key:sk.key,
-        data_value:val
-      },{onConflict:"user_id,data_key"});
+        data_key:it.key,
+        data_value:it.val
+      },{onConflict:"user_id,data_key"}).then(function(res){
+        if(!res.error)markSynced(it.key,it.mtime||Date.now());
+        return res;
+      });
     });
     var results=await Promise.all(promises);
     var errors=results.filter(function(r){return r.error});
@@ -2542,11 +2566,17 @@ async function migrateLocalToCloud(){
   }catch(e){console.warn("[Sync] Migration error:",e.message)}
 }
 
-// ── Auto-sync a cada 2 minutos ──
+// ── Auto-sync a cada 2 minutos + flush em eventos de "saída" ──
+var _autoSyncWired=false;
 function startAutoSync(){
   if(_syncTimer)clearInterval(_syncTimer);
   _syncTimer=setInterval(function(){syncToCloud()},120000);
-  window.addEventListener("beforeunload",function(){syncToCloud()});
+  if(_autoSyncWired)return;
+  _autoSyncWired=true;
+  // visibilitychange é mais confiável que beforeunload (funciona no mobile / ao trocar de aba)
+  document.addEventListener("visibilitychange",function(){if(document.visibilityState==="hidden")flushSync()});
+  window.addEventListener("pagehide",function(){flushSync()});
+  window.addEventListener("beforeunload",function(){flushSync()});
 }
 
 // ── Forçar sync manual ──
@@ -2598,7 +2628,7 @@ async function initAuth(){
 var SNAP_KEY="fincontrol_snapshots_v1";
 var snapshots=[];
 try{var _sn=localStorage.getItem(SNAP_KEY);if(_sn)snapshots=JSON.parse(_sn)}catch(e){}
-function saveSnapshots(){try{localStorage.setItem(SNAP_KEY,JSON.stringify(snapshots))}catch(e){}}
+function saveSnapshots(){try{localStorage.setItem(SNAP_KEY,JSON.stringify(snapshots))}catch(e){} debouncedSync("snapshots")}
 
 function takeSnapshot(){
   var today=new Date().toISOString().slice(0,10);
